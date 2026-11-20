@@ -14,7 +14,7 @@ ModelGo 有两个站点，账号和密钥互不通用。本插件把它们分别
 ## 安装
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.0
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
 ```
 
 其他 profile 把 `web` 换成 `tui` 或 `headless`。也可以直接从源码安装：
@@ -47,7 +47,8 @@ export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
 - **模型列表来自站点。** 用你的密钥读取 `GET /v1/models`，所以看到的就是这把密钥能用的模型。列表缓存 10 分钟；刷新失败时继续使用上一次的列表。
 - **每个模型走站点为它开放的协议。** Claude 模型走 `/v1/messages`（Anthropic Messages），其他对话模型走 `/v1/chat/completions`。插件对每个模型每天读取一次 `GET /v1/models/{model}/endpoints`，按站点声明的协议发送；站点没有为其开放对话协议的模型不会列出。
 - **上下文窗口和图片输入**取自站点为每个模型发布的信息。
-- **思考档位**只对 [`data/model-profiles.json`](data/model-profiles.json) 里列出的模型提供。不在该文件里的模型按"仅文本、无思考档位"提供，直到你为它补充描述（见下文）。
+- **思考档位**只对 [`data/model-profiles.json`](data/model-profiles.json) 里列出的模型提供，每个档位都在 modelgo.com 上用真实的工具调用验证过。不在该文件里的模型不提供思考档位，直到你为它补充描述（见下文）。
+- **模型列表重启后仍在。** 上一次成功读到的列表会保存在本地，下次启动立刻可用，即使当时连不上站点。
 - **流式输出、工具调用和思考回放**由 DSH 自带的 pi-ai 适配器处理，行为与内置提供商一致。
 
 向量、图片、视频、音频模型不会列出：当前版本只覆盖对话模型。

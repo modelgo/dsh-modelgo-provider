@@ -14,7 +14,7 @@ ModelGo runs two sites with separate accounts and keys. This plugin adds each as
 ## Install
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.0
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
 ```
 
 Use `--profile tui` or `--profile headless` for those profiles. To install from source instead:
@@ -47,7 +47,8 @@ export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
 - **Models come from the site.** The list is read from `GET /v1/models` with your key, so you see exactly the models your key may use. It is cached for 10 minutes; if a refresh fails, the previous list keeps serving.
 - **Each model uses the protocol the site offers for it.** Claude models go to `/v1/messages` (Anthropic Messages); other chat models go to `/v1/chat/completions`. The plugin reads `GET /v1/models/{model}/endpoints` once per model per day and follows what the site advertises; a model the site offers on no chat protocol is not listed.
 - **Context window and image input** come from what the site publishes for each model.
-- **Reasoning levels** are offered for the models listed in [`data/model-profiles.json`](data/model-profiles.json). A model not in that file is offered as text-only with no reasoning levels until you describe it (see below).
+- **Reasoning levels** are offered for the models listed in [`data/model-profiles.json`](data/model-profiles.json), each level checked against modelgo.com with a real tool call. A model not in that file is offered with no reasoning levels until you describe it (see below).
+- **The model list survives a restart.** The last good list is kept on disk, so models are available at once on the next start, even if the site cannot be reached at that moment.
 - **Streaming, tool calls and reasoning replay** are handled by the pi-ai adapter that DSH itself ships, so behaviour matches the built-in providers.
 
 Embedding, image, video and audio models are not listed: this version covers chat models only.
