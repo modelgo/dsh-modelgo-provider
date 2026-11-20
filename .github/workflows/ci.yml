@@ -35,5 +35,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - run: npm install --global @deepseek-ai/dsh@${{ matrix.dsh }}
+      # `dsh plugin add` drives pnpm, which the runner image does not ship.
+      - run: npm install --global pnpm @deepseek-ai/dsh@${{ matrix.dsh }}
       - run: npm run smoke:e2e
