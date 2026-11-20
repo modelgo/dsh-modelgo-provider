@@ -14,7 +14,7 @@ ModelGo runs two sites with separate accounts and keys. This plugin adds each as
 ## Install
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.2
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.3
 ```
 
 Use `--profile tui` or `--profile headless` for those profiles. In the desktop app, open **Plugins → Add plugin** and enter `@model-go/dsh-modelgo-provider`.

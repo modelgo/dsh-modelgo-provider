@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DEFAULT_CONTEXT_WINDOW, DEFAULT_MAX_TOKENS, pickApi, resolveModel, shippedProfiles } from '../lib/profiles.js';
+import { DEFAULT_CONTEXT_WINDOW, DEFAULT_MAX_TOKENS, defaultEffortFor, pickApi, resolveModel, shippedProfiles } from '../lib/profiles.js';
 import { SITES, resolveSites } from '../lib/sites.js';
 import { baseUrlFor, redact, siteRoot } from '../lib/util.js';
 
@@ -99,4 +99,20 @@ test('an unsized model on a small context gets an output cap that fits it', () =
 // What a model can read is the site's statement about that model; the plugin does not second-guess it.
 test('input types the site lists are passed through as listed', () => {
   assert.deepEqual(resolveModel(com, { id: 'glm-5.3-flash', input: ['text', 'image'] }).model.input, ['text', 'image']);
+});
+
+// Observed live on both sites: glm-5.3-flash refuses `thinking: disabled`, which is what
+// these wire formats send when no level is chosen — so every default request failed.
+test('a model that cannot run without thinking gets a default level', () => {
+  assert.equal(resolveModel(com, { id: 'glm-5.3-flash' }).defaultEffort, 'high');
+  // A level missing from the map keeps its default spelling and is offered; `null` hides it.
+  assert.equal(defaultEffortFor(undefined, { off: null, high: null, medium: null, low: 'low' }, { thinkingFormat: 'zai' }), 'low');
+});
+
+test('no default level is forced where the provider default can stand', () => {
+  // Thinking can be turned off: "nothing chosen" is a valid request.
+  assert.equal(resolveModel(com, { id: 'glm-5.1' }).defaultEffort, undefined);
+  // OpenAI-style models send no reasoning field at all when nothing is chosen.
+  assert.equal(resolveModel(com, { id: 'gpt-6.2-sol' }).defaultEffort, undefined);
+  assert.equal(defaultEffortFor(undefined, undefined, { thinkingFormat: 'deepseek' }), undefined);
 });

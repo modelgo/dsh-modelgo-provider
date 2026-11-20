@@ -14,7 +14,7 @@ ModelGo 有两个站点，账号和密钥互不通用。本插件把它们分别
 ## 安装
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.2
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.3
 ```
 
 其他 profile 把 `web` 换成 `tui` 或 `headless`。桌面版在**插件 → 添加插件**里输入 `@model-go/dsh-modelgo-provider`。
