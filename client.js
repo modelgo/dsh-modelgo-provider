@@ -1,8 +1,14 @@
 /**
  * ModelGo — browser half.
  *
- * Adds a key card to each ModelGo row of Settings → Models, so a key is pasted
- * where every other provider's key is pasted and nobody has to edit a file.
+ * Puts the key card wherever a person looks for it after installing:
+ *
+ *   - Settings → Models, in each ModelGo row, where every other provider's key
+ *     is pasted;
+ *   - the plugin's own page under Plugins, so the page that says "installed"
+ *     is also the page that finishes the setup.
+ *
+ * Nobody has to edit a file or already know where the setting lives.
  *
  * The key is checked against the site before it is stored (a wrong key, or a
  * key from the other ModelGo site, is refused on the spot), then written
@@ -20,6 +26,7 @@ window.__ModuleLoader__.load({
 
     /** Settings namespace: the profile entry id pinned by cordis.patch.yml. */
     const NS = 'modelgo';
+    const PACKAGE = '@model-go/dsh-modelgo-provider';
     /** Route → the facts the card shows. Mirrors lib/sites.js on the Host. */
     const SITES = {
       modelgo: { domain: 'modelgo.com', other: 'modelgo.ai', ref: 'MODELGO_API_KEY', console: 'https://modelgo.com' },
@@ -50,6 +57,9 @@ window.__ModuleLoader__.load({
       savedEmpty: '已保存，但这个密钥目前没有可用的对话模型。请在 ModelGo 控制台检查它的模型权限。',
       removed: '密钥已移除。',
       refused: 'DSH 拒绝了这次操作。',
+      summary: '在这里填写 ModelGo 密钥；填好后模型出现在模型选择器里。',
+      pageIntro: 'ModelGo 有两个站点，密钥互不通用。只需要给你使用的站点填写密钥；保存后它的模型会立刻出现在对话框的模型选择器里。同样的输入框也在「设置 → 模型」里。',
+      siteHeading: (s) => `ModelGo（${s.domain}）`,
     };
     const EN = {
       ready: (n) => `Key configured — ${n} chat models available.`,
@@ -75,6 +85,9 @@ window.__ModuleLoader__.load({
       savedEmpty: 'Saved, but this key has no chat models available yet. Check its model permissions in the ModelGo console.',
       removed: 'Key removed.',
       refused: 'DSH refused this operation.',
+      summary: 'Set your ModelGo key here; its models then appear in the model picker.',
+      pageIntro: 'ModelGo runs two sites with separate keys. Set a key only for the site you use; its models appear in the composer\'s model picker as soon as it is saved. The same fields are in Settings → Models.',
+      siteHeading: (s) => `ModelGo (${s.domain})`,
     };
     const strings = () => (/^zh/i.test(document.documentElement.lang || navigator.language || '') ? ZH : EN);
 
@@ -99,6 +112,10 @@ window.__ModuleLoader__.load({
       .mgo-foot{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--dsw-alias-label-tertiary,#8b93a1)}
       .mgo-link{color:var(--dsw-alias-brand-primary,#4d6bfe);text-decoration:none;align-self:flex-start}
       .mgo-link:hover{text-decoration:underline}
+      .mgo-page{display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:1.5;color:var(--dsw-alias-label-primary,#1f2328)}
+      .mgo-intro{color:var(--dsw-alias-label-secondary,#57606a)}
+      .mgo-site{padding:12px 14px;border-radius:12px;border:1px solid var(--dsw-alias-border-l3,rgba(0,0,0,.12))}
+      .mgo-site-title{font-weight:600}
     `;
     const ensureStyles = () => {
       if (document.getElementById('mgo-card-styles')) return;
@@ -120,7 +137,8 @@ window.__ModuleLoader__.load({
     };
 
     function ModelGoCard(props) {
-      const site = SITES[props.provider?.provider];
+      const routeId = props.provider?.provider;
+      const site = SITES[routeId];
       const remote = props.modelgo.remote;
       const t = strings();
       const [key, setKey] = useState('');
@@ -131,8 +149,9 @@ window.__ModuleLoader__.load({
       const [result, setResult] = useState(undefined);
       const [count, setCount] = useState(undefined);
       const [storedProblem, setStoredProblem] = useState(undefined);
-      const configured = override ?? props.keyConfigured === true;
-      const routeId = props.provider?.provider;
+      // The Models page tells the card whether a key is stored; elsewhere the card finds out by asking.
+      const [probed, setProbed] = useState(undefined);
+      const configured = override ?? (props.keyConfigured ?? probed) === true;
 
       /** Ask the Host which chat models a key can use; with no key it answers for the stored one. */
       const listModels = async (apiKey) => {
@@ -141,19 +160,23 @@ window.__ModuleLoader__.load({
         return { ok: true, count: Array.isArray(response.value) ? response.value.length : 0 };
       };
 
-      // An already-configured row reports whether its key still works.
+      // An already-configured row reports whether its key still works. Where nobody
+      // said whether a key is stored, the same read answers that too.
       useEffect(() => {
-        if (!site || !configured || result?.kind === 'ok') return undefined;
+        const known = props.keyConfigured !== undefined;
+        if (!site || result?.kind === 'ok' || (known ? !configured : override !== undefined || probed !== undefined)) return undefined;
         let live = true;
         setCount(undefined);
         setStoredProblem(undefined);
         listModels().then((answer) => {
           if (!live) return;
-          if (answer.ok) setCount(answer.count);
-          else setStoredProblem(explain(t, site, answer.message));
+          if (answer.ok) { setProbed(true); setCount(answer.count); return; }
+          if (!known && /MISSING_CREDENTIAL|no key for/i.test(String(answer.message))) { setProbed(false); return; }
+          setProbed(true);
+          setStoredProblem(explain(t, site, answer.message));
         }, () => {});
         return () => { live = false; };
-      }, [routeId, configured]);
+      }, [routeId, configured, props.keyConfigured]);
 
       if (!site) return null;
 
@@ -249,6 +272,19 @@ window.__ModuleLoader__.load({
       ]);
     }
 
+    /** The plugin's own page under Plugins: both sites' key cards, so setup finishes where install ended. */
+    function ModelGoConfigPage(props) {
+      const t = strings();
+      if (props.view === 'summary') return t.summary;
+      return h('div', { className: 'mgo-page' }, [
+        h('div', { key: 'intro', className: 'mgo-intro' }, t.pageIntro),
+        ...Object.entries(SITES).map(([id, site]) => h('div', { key: id, className: 'mgo-site' }, [
+          h('div', { key: 'title', className: 'mgo-site-title' }, t.siteHeading(site)),
+          h(ModelGoCard, { key: 'card', provider: { provider: id }, modelgo: props.modelgo }),
+        ])),
+      ]);
+    }
+
     return {
       inject: ['slots', 'remote', 'remote.credentials', 'remote.llm'],
       apply(ctx) {
@@ -259,6 +295,12 @@ window.__ModuleLoader__.load({
           key: NS,
           inject: () => ({ modelgo: { remote: ctx.remote } }),
         }, ModelGoCard));
+        // Keyed by package name; a host without the Plugins page simply never asks for it.
+        ctx.slots.inject('plugins.bundle.config', () => ctx.slots.register({
+          name: 'plugins.bundle.config',
+          key: PACKAGE,
+          inject: () => ({ modelgo: { remote: ctx.remote } }),
+        }, ModelGoConfigPage));
       },
     };
   },

@@ -254,8 +254,8 @@
         "minimal": null,
         "low": null,
         "medium": null,
-        "high": null,
-        "max": null
+        "high": "high",
+        "max": "max"
       },
       "compat": {
         "supportsStore": false,
@@ -1417,9 +1417,6 @@
         "supportsDeveloperRole": false,
         "supportsStore": false,
         "thinkingFormat": "qwen"
-      },
-      "thinkingLevelMap": {
-        "medium": null
       }
     },
     "qwen3.6-max-preview": {
@@ -1561,6 +1558,6 @@
       "modelgo-ai"
     ],
     "method": "scripts/live-conformance.mjs (tool round trip at each reasoning level; image input)",
-    "note": "Levels a site refused were removed. modelgo.com: every listed chat model family, new models level by level. modelgo.ai: one or two models per family."
+    "note": "Levels a model does not have were removed. A level the model has but a site refuses today is kept: that is for the site to fix. modelgo.com: every listed chat model family, new models level by level. modelgo.ai: one or two models per family."
   }
 }

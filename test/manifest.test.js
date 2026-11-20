@@ -39,3 +39,13 @@ test('the browser half is shipped and declared', () => {
   // The card must store under the same references the Host resolves.
   for (const ref of ['MODELGO_API_KEY', 'MODELGO_AI_API_KEY']) assert.match(client, new RegExp(`ref: '${ref}'`));
 });
+
+test('the in-app page has a title, a description and a quick start in both languages', () => {
+  for (const lang of ['zh', 'en']) {
+    const { meta } = JSON.parse(read(`locale/${lang}.json`));
+    assert.ok(meta.title && meta.description, lang);
+    // The quick start must exist and must say where the key goes.
+    assert.match(read(meta.detail), lang === 'zh' ? /设置 → 模型/ : /Settings → Models/, lang);
+  }
+  assert.ok(pkg.files.includes('locale/*.json') && pkg.files.includes('docs/quickstart.*.md'));
+});

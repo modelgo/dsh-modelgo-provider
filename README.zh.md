@@ -14,7 +14,7 @@ ModelGo 有两个站点，账号和密钥互不通用。本插件把它们分别
 ## 安装
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.2
 ```
 
 其他 profile 把 `web` 换成 `tui` 或 `headless`。桌面版在**插件 → 添加插件**里输入 `@model-go/dsh-modelgo-provider`。
@@ -25,9 +25,16 @@ dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
 
 ## 配置密钥
 
-1. 打开**设置 → 模型**，两个 ModelGo 站点已经列在那里。
-2. 在你使用的站点那一行粘贴密钥，点**验证并保存**。
-3. 在模型选择器里选择 ModelGo 的模型即可，不需要重启。
+安装后只需要这一步。下面两个位置是同一个输入框，任选一个：
+
+| 在哪里 | 怎么到达 |
+|---|---|
+| 插件自己的页面 | 左侧**插件** → 点开 **ModelGo** → 往下滚动到两张密钥卡片 |
+| 模型设置 | 左下角**更多** → **设置** → **模型** |
+
+1. 找到你使用的站点对应的卡片：**ModelGo（modelgo.com）** 或 **ModelGo（modelgo.ai）**。
+2. 粘贴密钥，点**验证并保存**。密钥以 `mgk_` 开头，在对应站点的控制台创建。
+3. 回到对话框，点输入框右下角的模型名称，选择 ModelGo 这一组里的模型。不需要重启。
 
 密钥在保存前会先向站点验证，填错了，或者填成另一个 ModelGo 站点的密钥，会当场提示。只需要配置你用的那个站点；没有密钥的站点不显示任何模型。
 

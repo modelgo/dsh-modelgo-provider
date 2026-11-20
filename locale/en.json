@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "ModelGo",
+    "description": "Adds the ModelGo sites modelgo.com and modelgo.ai to the model picker. After installing, paste your key on this page or in Settings \u2192 Models.",
+    "detail": "docs/quickstart.en.md"
+  }
+}

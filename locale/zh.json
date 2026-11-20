@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "ModelGo",
+    "description": "把 ModelGo 的 modelgo.com 与 modelgo.ai 两个站点接入模型选择器。安装后在本页或「设置 → 模型」里粘贴密钥即可使用。",
+    "detail": "docs/quickstart.zh.md"
+  }
+}

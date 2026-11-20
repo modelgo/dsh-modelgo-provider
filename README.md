@@ -14,7 +14,7 @@ ModelGo runs two sites with separate accounts and keys. This plugin adds each as
 ## Install
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.2
 ```
 
 Use `--profile tui` or `--profile headless` for those profiles. In the desktop app, open **Plugins → Add plugin** and enter `@model-go/dsh-modelgo-provider`.
@@ -25,9 +25,16 @@ Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1
 
 ## Set your key
 
-1. Open **Settings → Models**. The two ModelGo sites are listed there.
-2. Paste your key into the row of the site you use and click **Verify and save**.
-3. Pick a ModelGo model in the model picker. No restart is needed.
+This is the only step after installing. The same field is in two places; use either:
+
+| Where | How to get there |
+|---|---|
+| The plugin's own page | **Plugins** in the sidebar → open **ModelGo** → scroll down to the two key cards |
+| Model settings | **More** at the bottom left → **Settings** → **Models** |
+
+1. Find the card for the site you use: **ModelGo (modelgo.com)** or **ModelGo (modelgo.ai)**.
+2. Paste your key and click **Verify and save**. A key starts with `mgk_` and is created in that site's console.
+3. Back in a conversation, click the model name at the bottom right of the composer and pick a model from the ModelGo group. No restart is needed.
 
 The key is checked against the site before it is saved, so a mistyped key, or a key from the other ModelGo site, is refused on the spot. You only need a key for the site you use; a site with no key shows no models.
 
