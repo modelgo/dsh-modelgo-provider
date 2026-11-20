@@ -119,7 +119,7 @@ async function worker(index, queue, tarball) {
     const started = Date.now();
     const run = await dsh(['--profile', 'headless', prompt]).catch((error) => error);
     const answer = (run.stdout ?? '').trim();
-    const ok = name === 'image' ? /magenta|purple|pink|fuchsia|violet|紫|品红|粉|洋红/i.test(answer) : answer.includes(token);
+    const ok = name === 'image' ? /magenta|purple|pink|fuchsia|violet|ff00ff|紫|品红|粉|洋红/i.test(answer) : answer.includes(token);
     const output = clean(`${answer}\n${run.stderr ?? run.message ?? ''}`);
     // Refused by DSH before anything was sent: the plugin does not offer this level on this model.
     const notOffered = !ok && /UNSUPPORTED_REASONING_EFFORT/.test(output);

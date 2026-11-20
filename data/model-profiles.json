@@ -685,7 +685,10 @@
       },
       "thinkingLevelMap": {
         "off": null
-      }
+      },
+      "forceInput": [
+        "text"
+      ]
     },
     "glm-5.3-prime": {
       "api": "openai-completions",
@@ -1356,6 +1359,9 @@
         "supportsReasoningEffort": false,
         "supportsStore": false,
         "thinkingFormat": "deepseek"
+      },
+      "thinkingLevelMap": {
+        "off": null
       }
     },
     "qwen3-coder-plus": {
@@ -1553,8 +1559,11 @@
   },
   "verified": {
     "date": "2026-11-20",
-    "site": "modelgo",
-    "method": "scripts/live-conformance.mjs (tool round trip at each reasoning level)",
-    "note": "Levels a site refused were removed. Entries for Claude 4.x/5 and gpt-5.4-pro were only partly exercised."
+    "sites": [
+      "modelgo",
+      "modelgo-ai"
+    ],
+    "method": "scripts/live-conformance.mjs (tool round trip at each reasoning level; image input)",
+    "note": "Levels a site refused were removed. modelgo.com: every listed chat model family, new models level by level. modelgo.ai: one or two models per family."
   }
 }
