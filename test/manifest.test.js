@@ -36,16 +36,30 @@ test('the browser half is shipped and declared', () => {
   assert.equal(pkg.dsh.client.platform, 'web');
   const client = read('client.js');
   assert.match(client, new RegExp(`id: '${pkg.name}'`), 'the client module id must be the package name');
-  // The card must store under the same references the Host resolves.
-  for (const ref of ['MODELGO_API_KEY', 'MODELGO_AI_API_KEY']) assert.match(client, new RegExp(`ref: '${ref}'`));
+  // The card must store under the same reference, and ask for the same route, the Host resolves.
+  assert.match(client, /KEY_REF = 'MODELGO_API_KEY'/);
+  assert.match(client, /ROUTE = 'modelgo'/);
 });
 
-test('the in-app page has a title, a description and a quick start in both languages', () => {
+test('the in-app page has a title, a description and a short note in both languages', () => {
   for (const lang of ['zh', 'en']) {
     const { meta } = JSON.parse(read(`locale/${lang}.json`));
     assert.ok(meta.title && meta.description, lang);
-    // The quick start must exist and must say where the key goes.
-    assert.match(read(meta.detail), lang === 'zh' ? /设置 → 模型/ : /Settings → Models/, lang);
+    // Kept short on purpose: the page shows this above the key field.
+    assert.ok(read(meta.detail).length < 400, `${lang}: the in-app note must stay short`);
   }
   assert.ok(pkg.files.includes('locale/*.json') && pkg.files.includes('docs/quickstart.*.md'));
+});
+
+test('the plugin ships an icon', () => {
+  assert.equal(pkg.icon, './icon.png');
+  assert.equal(pkg.exports['./icon'], './icon.png');
+  assert.ok(pkg.files.includes('icon.png'));
+  assert.ok(readFileSync(new URL('../icon.png', import.meta.url)).length > 1000);
+});
+
+test('nothing shipped still points at the retired modelgo.com site', () => {
+  for (const name of ['README.md', 'README.zh.md', 'client.js', 'index.js', 'lib/sites.js', 'cordis.patch.yml', 'docs/quickstart.zh.md', 'docs/quickstart.en.md', 'locale/zh.json', 'locale/en.json']) {
+    assert.doesNotMatch(read(name), /modelgo\.com/, name);
+  }
 });

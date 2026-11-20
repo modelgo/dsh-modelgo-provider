@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Conformance sweep: what an agent actually needs from each model, on the real
- * engine against the real sites.
+ * engine against the real site.
  *
- *   node scripts/live-conformance.mjs modelgo/deepseek-v4-flash modelgo-ai/claude-sonnet-5
+ *   node scripts/live-conformance.mjs modelgo/deepseek-v4-flash modelgo/claude-sonnet-5
  *   CASES=tool,image node scripts/live-conformance.mjs modelgo/gpt-5.4-mini
  *   node scripts/live-conformance.mjs modelgo/claude-opus-5@low,max      # only these levels
  *
@@ -19,10 +19,10 @@
  *   image   look at a solid-colour PNG through `read_image` and name the colour
  *           (skipped when the site lists the model as text-only)
  *
- * Models are resolved from each site's live list, exactly as the plugin does.
+ * Models are resolved from the site's live list, exactly as the plugin does.
  *
- * Every run is a real, billed request (two per case). Keys come from the
- * environment (MODELGO_API_KEY, MODELGO_AI_API_KEY). Output is one line per
+ * Every run is a real, billed request (two per case). The key comes from the
+ * environment (MODELGO_API_KEY). Output is one line per
  * case and a JSON summary; a key value is never printed.
  */
 import { execFile } from 'node:child_process';
@@ -50,10 +50,10 @@ const targets = process.argv.slice(2).map((arg) => {
   return { provider: arg.slice(0, i), model, ...(only ? { only: new Set(only.split(',')) } : {}) };
 });
 if (!targets.length || targets.some((t) => !sites.has(t.provider) || !t.model)) {
-  console.error('usage: node scripts/live-conformance.mjs <modelgo|modelgo-ai>/<model> ...');
+  console.error('usage: node scripts/live-conformance.mjs modelgo/<model> ...');
   process.exit(2);
 }
-const clean = (text) => redact(redact(text, process.env.MODELGO_API_KEY), process.env.MODELGO_AI_API_KEY);
+const clean = (text) => redact(text, process.env.MODELGO_API_KEY);
 
 /** A 64×64 solid magenta PNG, built by hand so the script needs no image library. */
 function solidPng([r, g, b], size = 64) {

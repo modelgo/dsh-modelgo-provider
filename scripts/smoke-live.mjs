@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * Live check against the real sites, using keys from the environment:
+ * Live check against the real site, using the key from the environment:
  *
- *   MODELGO_API_KEY=... MODELGO_AI_API_KEY=... node scripts/smoke-live.mjs
+ *   MODELGO_API_KEY=... node scripts/smoke-live.mjs
  *
- * For each site with a key it reads /v1/models, resolves every chat model the
+ * It reads /v1/models, resolves every chat model the
  * way the plugin does, and reports what the shipped snapshot does not cover.
  * Read-only: it lists models and their endpoints, and sends no model request.
  * Prints model ids and counts only — never a key.

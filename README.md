@@ -2,58 +2,48 @@
 
 English | [中文](README.zh.md)
 
-[ModelGo](https://modelgo.com) model provider for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh).
-
-ModelGo runs two sites with separate accounts and keys. This plugin adds each as its own group in the model picker:
-
-| Picker group | Provider route | API address | Key reference |
-|---|---|---|---|
-| ModelGo (modelgo.com) | `modelgo` | `https://api.modelgo.com` | `MODELGO_API_KEY` |
-| ModelGo (modelgo.ai) | `modelgo-ai` | `https://api.modelgo.ai` | `MODELGO_AI_API_KEY` |
+[ModelGo](https://modelgo.ai) model provider for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh): adds ModelGo models to the DSH model picker.
 
 ## Install
 
+Desktop app: **Plugins → Add plugin**, enter `@model-go/dsh-modelgo-provider`.
+
+Command line:
+
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.3
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.3.0
 ```
 
-Use `--profile tui` or `--profile headless` for those profiles. In the desktop app, open **Plugins → Add plugin** and enter `@model-go/dsh-modelgo-provider`.
+Use `--profile tui` or `--profile headless` for those profiles.
 
-Install by package name, not by GitHub address: DSH offers updates only for plugins installed from npm. A copy installed from `github:modelgo/dsh-modelgo-provider` works, but never shows "update available" — to move it to a newer version, remove it and add it again by package name.
+Install by package name, not by GitHub address: DSH offers updates only for plugins installed from npm.
 
-Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1 and 0.2.2-rc.5. There is no build step and no runtime dependency beyond what DSH ships.
+Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1 and 0.2.2-rc.5.
 
 ## Set your key
 
-This is the only step after installing. The same field is in two places; use either:
+This is the only step after installing:
 
-| Where | How to get there |
-|---|---|
-| The plugin's own page | **Plugins** in the sidebar → open **ModelGo** → scroll down to the two key cards |
-| Model settings | **More** at the bottom left → **Settings** → **Models** |
-
-1. Find the card for the site you use: **ModelGo (modelgo.com)** or **ModelGo (modelgo.ai)**.
-2. Paste your key and click **Verify and save**. A key starts with `mgk_` and is created in that site's console.
+1. Open **Plugins → ModelGo**.
+2. Paste your API key and click **Verify and save**. A key starts with `mgk_` and is created in the [modelgo.ai](https://modelgo.ai) console.
 3. Back in a conversation, click the model name at the bottom right of the composer and pick a model from the ModelGo group. No restart is needed.
 
-The key is checked against the site before it is saved, so a mistyped key, or a key from the other ModelGo site, is refused on the spot. You only need a key for the site you use; a site with no key shows no models.
+The same field is in the ModelGo row of **Settings → Models**.
 
-The key is stored in the DSH credential store. The plugin never writes it to a config file, never shows it again, and removes key values from error messages.
+The key is checked against the site before it is saved, so a mistyped key is refused on the spot. It is kept in the DSH credential store, never written to a config file and never shown again.
 
 For headless or scripted use, set the key in the environment that starts DSH instead:
 
 ```sh
-export MODELGO_API_KEY=mgk_...        # modelgo.com
-export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
+export MODELGO_API_KEY=mgk_...
 ```
 
 ## What it does
 
-- **Models come from the site.** The list is read from `GET /v1/models` with your key, so you see exactly the models your key may use. It is cached for 10 minutes; if a refresh fails, the previous list keeps serving.
-- **Each model uses the protocol the site offers for it.** Claude models go to `/v1/messages` (Anthropic Messages); other chat models go to `/v1/chat/completions`. The plugin reads `GET /v1/models/{model}/endpoints` once per model per day and follows what the site advertises; a model the site offers on no chat protocol is not listed.
+- **Models come from the site.** The list is read from `GET /v1/models` with your key, so you see exactly the models your key may use. It is cached for 10 minutes and kept on disk, so it is available at once after a restart.
+- **Each model uses the protocol the site offers for it.** Claude models go to `/v1/messages`; other chat models go to `/v1/chat/completions`, as the site's `GET /v1/models/{model}/endpoints` says.
 - **Context window and image input** come from what the site publishes for each model.
-- **Reasoning levels** are offered for the models listed in [`data/model-profiles.json`](data/model-profiles.json), each level checked against modelgo.com with a real tool call. A model not in that file is offered with no reasoning levels until you describe it (see below).
-- **The model list survives a restart.** The last good list is kept on disk, so models are available at once on the next start, even if the site cannot be reached at that moment.
+- **Reasoning levels** follow [`data/model-profiles.json`](data/model-profiles.json), each level checked with a real tool call.
 - **Streaming, tool calls and reasoning replay** are handled by the pi-ai adapter that DSH itself ships, so behaviour matches the built-in providers.
 
 Embedding, image, video and audio models are not listed: this version covers chat models only.
@@ -66,8 +56,6 @@ Everything is optional. Override the plugin row in your profile's `cordis.patch.
 - id: modelgo
   config:
     sites:
-      modelgo-ai:
-        enabled: false            # hide a site you do not use
       modelgo:
         models:                   # non-empty: serve exactly these models
           - id: some-new-model
@@ -78,12 +66,12 @@ Everything is optional. Override the plugin row in your profile's `cordis.patch.
 
 | Field | Default | Meaning |
 |---|---|---|
-| `sites.<route>.enabled` | `true` | Show this site in the model picker |
-| `sites.<route>.apiKeyEnv` | see table above | Credential reference holding the key |
-| `sites.<route>.baseURL` | see table above | Site address |
-| `sites.<route>.displayName` | see table above | Group heading in the picker |
-| `sites.<route>.headers` | none | Extra HTTP headers for this site |
-| `sites.<route>.models` | `[]` | Empty serves every chat model the site lists; a list serves exactly those |
+| `sites.modelgo.enabled` | `true` | Show ModelGo in the model picker |
+| `sites.modelgo.apiKeyEnv` | `MODELGO_API_KEY` | Credential reference holding the key |
+| `sites.modelgo.baseURL` | `https://api.modelgo.ai` | Site address |
+| `sites.modelgo.displayName` | `ModelGo` | Group heading in the picker |
+| `sites.modelgo.headers` | none | Extra HTTP headers |
+| `sites.modelgo.models` | `[]` | Empty serves every chat model the site lists; a list serves exactly those |
 | `catalogTtlMs` | `600000` | How long a fetched model list is reused |
 | `streamIdleTimeoutMs` | `300000` | Abort a stream that stays silent this long |
 | `retryPolicy` | DSH default | Retry policy for model requests |
@@ -94,18 +82,18 @@ A model entry takes `id`, and optionally `name`, `contextWindow`, `maxTokens`, `
 
 | Symptom | Cause |
 |---|---|
-| A site's group is missing from the picker | No key is set for that site (set it in Settings → Models), or the site is disabled |
-| `MISSING_CREDENTIAL` | No key is stored for that site, and none is set in the environment that started DSH |
-| `AUTH` when listing models | The key is wrong, or belongs to the other site |
+| No ModelGo group in the model picker | No key is saved yet. Set it under **Plugins → ModelGo** |
+| The key is reported as not valid | The key is mistyped or has been deleted |
 | A model you expect is missing | Your key's policy does not allow it, or it is not a chat model |
+| The plugin page never shows "update available" | The plugin was installed from a GitHub address. Remove it and add it again by package name |
 
 ## Development
 
 ```sh
 npm test                 # unit tests, no network
-npm run smoke:e2e        # real dsh + local mock gateway: both sites, both protocols
-node scripts/mock-gateway.mjs   # the mock on its own, to try the settings card by hand
-npm run smoke:live       # read-only check against the real sites, using keys from the environment
+npm run smoke:e2e        # real dsh + local mock gateway: both protocols
+npm run smoke:live       # read-only check against the real site, using the key from the environment
+node scripts/mock-gateway.mjs   # the mock on its own, to try the key field by hand
 ```
 
 `smoke:e2e` needs `dsh` on `PATH` (or `DSH_BIN`). It installs the packed tarball into an isolated `DSH_HOME` and uses no real key.

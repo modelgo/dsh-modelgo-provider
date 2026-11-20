@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * Real conversations through the real engine, against the real sites.
+ * Real conversations through the real engine, against the real site.
  *
- *   node scripts/live-chat.mjs modelgo/deepseek-v4-flash modelgo-ai/claude-sonnet-4.6
+ *   node scripts/live-chat.mjs modelgo/deepseek-v4-flash modelgo/claude-sonnet-4.6
  *
  * Packs this repo, installs it into an isolated headless profile, and runs one
- * short `dsh` task per `<route>/<model>` argument. Keys come from the
- * environment (MODELGO_API_KEY, MODELGO_AI_API_KEY). Each task is a real,
+ * short `dsh` task per `<route>/<model>` argument. The key comes from the
+ * environment (MODELGO_API_KEY). Each task is a real,
  * billed model request — keep the list short. Prints pass/fail per model and
  * the tail of the engine's diagnostics on failure; never a key.
  */
@@ -28,7 +28,7 @@ const work = path.join(root, 'work');
 await mkdir(work);
 const env = { ...process.env, DSH_HOME: path.join(root, 'dsh-home'), NO_COLOR: '1' };
 const dsh = (args) => exec(dshBin, [...dshArgs, ...args], { env, cwd: work, maxBuffer: 64 * 1024 * 1024, timeout: 180_000 });
-const clean = (text) => redact(redact(text, process.env.MODELGO_API_KEY), process.env.MODELGO_AI_API_KEY);
+const clean = (text) => redact(text, process.env.MODELGO_API_KEY);
 let failed = 0;
 
 try {

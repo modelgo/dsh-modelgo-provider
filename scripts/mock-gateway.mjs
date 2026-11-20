@@ -1,21 +1,21 @@
 /**
  * A local stand-in for the ModelGo gateway, for tests that must not touch the
- * real sites. It serves two "sites" under the path prefixes /com and /ai, each
- * accepting only its own key, with the gateway's real response shapes:
+ * real site. It accepts one key and answers with the gateway's real response
+ * shapes:
  *
- *   GET  /<site>/v1/models                    model list
- *   GET  /<site>/v1/models/{id}/endpoints     advertised protocols
- *   POST /<site>/v1/chat/completions          OpenAI SSE stream
- *   POST /<site>/v1/messages                  Anthropic SSE stream
+ *   GET  /v1/models                    model list
+ *   GET  /v1/models/{id}/endpoints     advertised protocols
+ *   POST /v1/chat/completions          OpenAI SSE stream
+ *   POST /v1/messages                  Anthropic SSE stream
  *
  * Run it directly to try the plugin by hand:
  *
- *   node scripts/mock-gateway.mjs        # prints the two base URLs and keys
+ *   node scripts/mock-gateway.mjs        # prints the base URL and the key
  */
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 
-export const MOCK_KEYS = Object.freeze({ com: 'mgk_smoke_com_site_key_0001', ai: 'mgk_smoke_ai_site_key_0002' });
+export const MOCK_KEY = 'mgk_smoke_test_key_0001';
 
 const sse = (res, events) => {
   res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' });
@@ -33,13 +33,12 @@ export async function startMockGateway({ port = 0 } = {}) {
   const seen = [];
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://mock');
-    const [, siteKey, ...rest] = url.pathname.split('/');
-    const route = `/${rest.join('/')}`;
+    const route = url.pathname;
     const key = (req.headers.authorization ?? '').replace(/^Bearer /, '') || req.headers['x-api-key'];
     let body = '';
     for await (const chunk of req) body += chunk;
-    seen.push({ site: siteKey, method: req.method, route, key, model: body ? JSON.parse(body).model : undefined });
-    if (key !== MOCK_KEYS[siteKey]) return json(res, 401, { error: { code: 401, message: 'unauthorized' } });
+    seen.push({ method: req.method, route, key, model: body ? JSON.parse(body).model : undefined });
+    if (key !== MOCK_KEY) return json(res, 401, { error: { code: 401, message: 'unauthorized' } });
 
     if (req.method === 'GET' && route === '/v1/models') {
       return json(res, 200, { object: 'list', data: [item('gpt-5'), item('claude-sonnet-5'), { ...item('text-embedding-3-large'), output_modalities: ['embedding'] }] });
@@ -53,7 +52,7 @@ export async function startMockGateway({ port = 0 } = {}) {
       const chunk = (delta, finish = null) => `data: ${JSON.stringify({ id: 'chatcmpl-smoke', object: 'chat.completion.chunk', created: 1, model: 'gpt-5', choices: [{ index: 0, delta, finish_reason: finish }] })}\n\n`;
       return sse(res, [
         chunk({ role: 'assistant', content: '' }),
-        chunk({ content: `pong-chat-${siteKey}` }),
+        chunk({ content: 'pong-chat' }),
         chunk({}, 'stop'),
         `data: ${JSON.stringify({ id: 'chatcmpl-smoke', object: 'chat.completion.chunk', created: 1, model: 'gpt-5', choices: [], usage: { prompt_tokens: 5, completion_tokens: 3, total_tokens: 8 } })}\n\n`,
         'data: [DONE]\n\n',
@@ -64,7 +63,7 @@ export async function startMockGateway({ port = 0 } = {}) {
       return sse(res, [
         event('message_start', { message: { id: 'msg_smoke', type: 'message', role: 'assistant', model: 'claude-sonnet-5', content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 5, output_tokens: 1 } } }),
         event('content_block_start', { index: 0, content_block: { type: 'text', text: '' } }),
-        event('content_block_delta', { index: 0, delta: { type: 'text_delta', text: `pong-messages-${siteKey}` } }),
+        event('content_block_delta', { index: 0, delta: { type: 'text_delta', text: 'pong-messages' } }),
         event('content_block_stop', { index: 0 }),
         event('message_delta', { delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: 3 } }),
         event('message_stop', {}),
@@ -78,7 +77,5 @@ export async function startMockGateway({ port = 0 } = {}) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const mock = await startMockGateway({ port: Number(process.env.PORT ?? 0) });
-  console.log(`mock ModelGo gateway on ${mock.origin}`);
-  console.log(`  modelgo     baseURL ${mock.origin}/com   key ${MOCK_KEYS.com}`);
-  console.log(`  modelgo-ai  baseURL ${mock.origin}/ai    key ${MOCK_KEYS.ai}`);
+  console.log(`mock ModelGo gateway: baseURL ${mock.origin}   key ${MOCK_KEY}`);
 }

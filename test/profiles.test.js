@@ -4,21 +4,21 @@ import { DEFAULT_CONTEXT_WINDOW, DEFAULT_MAX_TOKENS, defaultEffortFor, pickApi, 
 import { SITES, resolveSites } from '../lib/sites.js';
 import { baseUrlFor, redact, siteRoot } from '../lib/util.js';
 
-const [com, ai] = resolveSites({});
+const [site] = resolveSites({});
 
-test('the two sites are fixed routes with separate key references', () => {
-  assert.deepEqual(SITES.map((s) => [s.id, s.baseURL, s.apiKeyEnv]), [
-    ['modelgo', 'https://api.modelgo.com', 'MODELGO_API_KEY'],
-    ['modelgo-ai', 'https://api.modelgo.ai', 'MODELGO_AI_API_KEY'],
+test('the site is one fixed route with one key reference', () => {
+  assert.deepEqual(SITES.map((s) => [s.id, s.displayName, s.baseURL, s.apiKeyEnv]), [
+    ['modelgo', 'ModelGo', 'https://api.modelgo.ai', 'MODELGO_API_KEY'],
   ]);
-  assert.equal(com.enabled && ai.enabled, true);
+  assert.equal(site.enabled, true);
 });
 
-test('resolveSites applies stored configuration per site', () => {
-  const [a, b] = resolveSites({ sites: { modelgo: { baseURL: 'https://api.modelgo.com/v1/', models: [{ id: 'gpt-5' }, { name: 'no id' }] }, 'modelgo-ai': { enabled: false, displayName: 'Intl' } } });
-  assert.equal(a.baseURL, 'https://api.modelgo.com');
+test('resolveSites applies stored configuration', () => {
+  const [a] = resolveSites({ sites: { modelgo: { baseURL: 'https://gateway.example/v1/', displayName: 'Mine', models: [{ id: 'gpt-5' }, { name: 'no id' }] } } });
+  assert.equal(a.baseURL, 'https://gateway.example');
   assert.deepEqual(a.models, [{ id: 'gpt-5' }]);
-  assert.deepEqual([b.enabled, b.displayName, b.apiKeyEnv], [false, 'Intl', 'MODELGO_AI_API_KEY']);
+  assert.deepEqual([a.enabled, a.displayName, a.apiKeyEnv], [true, 'Mine', 'MODELGO_API_KEY']);
+  assert.equal(resolveSites({ sites: { modelgo: { enabled: false } } })[0].enabled, false);
 });
 
 test('url helpers and redaction', () => {
@@ -38,9 +38,9 @@ test('pickApi honours what the site advertises', () => {
 });
 
 test('a shipped model gets its wire quirks from the snapshot and its sizes from the site', () => {
-  const { model } = resolveModel(com, { id: 'deepseek-v4-pro', contextWindow: 500000, input: ['text'] });
+  const { model } = resolveModel(site, { id: 'deepseek-v4-pro', contextWindow: 500000, input: ['text'] });
   assert.equal(model.api, 'openai-completions');
-  assert.equal(model.baseUrl, 'https://api.modelgo.com/v1');
+  assert.equal(model.baseUrl, 'https://api.modelgo.ai/v1');
   assert.equal(model.provider, 'modelgo');
   assert.equal(model.contextWindow, 500000, 'the live site wins over the snapshot');
   assert.equal(model.reasoning, true);
@@ -48,15 +48,15 @@ test('a shipped model gets its wire quirks from the snapshot and its sizes from 
   assert.equal(model.thinkingLevelMap.high, 'high');
 });
 
-test('Claude models go to the Anthropic surface at the site root, per site', () => {
-  const { model } = resolveModel(ai, { id: 'claude-sonnet-5' });
+test('Claude models go to the Anthropic surface at the site root', () => {
+  const { model } = resolveModel(site, { id: 'claude-sonnet-5' });
   assert.equal(model.api, 'anthropic-messages');
   assert.equal(model.baseUrl, 'https://api.modelgo.ai');
-  assert.equal(model.provider, 'modelgo-ai');
+  assert.equal(model.provider, 'modelgo');
 });
 
 test('an unknown model is offered plain: text only, no reasoning', () => {
-  const { model, pinnedMaxTokens } = resolveModel(com, { id: 'brand-new-model' });
+  const { model, pinnedMaxTokens } = resolveModel(site, { id: 'brand-new-model' });
   assert.deepEqual(model.input, ['text']);
   assert.equal(model.reasoning, false);
   assert.equal('thinkingLevelMap' in model, false);
@@ -66,7 +66,7 @@ test('an unknown model is offered plain: text only, no reasoning', () => {
 });
 
 test('the user entry wins over both the site and the snapshot', () => {
-  const { model, pinnedMaxTokens } = resolveModel(com, { id: 'brand-new-model', contextWindow: 1000, input: ['text'] }, {
+  const { model, pinnedMaxTokens } = resolveModel(site, { id: 'brand-new-model', contextWindow: 1000, input: ['text'] }, {
     override: { id: 'brand-new-model', name: 'Mine', contextWindow: 64000, maxTokens: 4096, input: ['text', 'image'], reasoningLevels: ['off', 'high'], api: 'openai-responses' },
   });
   assert.deepEqual([model.name, model.contextWindow, model.maxTokens, model.api], ['Mine', 64000, 4096, 'openai-responses']);
@@ -77,7 +77,7 @@ test('the user entry wins over both the site and the snapshot', () => {
 });
 
 test('a model the site offers on no chat protocol is dropped', () => {
-  assert.equal(resolveModel(com, { id: 'gpt-5' }, { protocols: ['openai_embeddings'] }), undefined);
+  assert.equal(resolveModel(site, { id: 'gpt-5' }, { protocols: ['openai_embeddings'] }), undefined);
 });
 
 test('every shipped profile names a supported wire API', () => {
@@ -86,33 +86,33 @@ test('every shipped profile names a supported wire API', () => {
   for (const [id, p] of Object.entries(profiles)) assert.match(p.api, /^(openai-completions|anthropic-messages|openai-responses)$/, id);
 });
 
-// Observed live: api.modelgo.ai refuses max_tokens=128000 for this model, api.modelgo.com accepts it.
-test('a per-site correction applies to that site only', () => {
-  assert.equal(resolveModel(ai, { id: 'claude-sonnet-4.6' }).model.maxTokens, 64000);
-  assert.equal(resolveModel(com, { id: 'claude-sonnet-4.6' }).model.maxTokens, 128000);
+// Observed live: the site refuses max_tokens=128000 for this model and accepts 64000.
+test('a limit the site sets lower than the vendor is applied', () => {
+  assert.equal(resolveModel(site, { id: 'claude-sonnet-4.6' }).model.maxTokens, 64000);
+  assert.equal(resolveModel(site, { id: 'claude-sonnet-5' }).model.maxTokens, 128000);
 });
 
 test('an unsized model on a small context gets an output cap that fits it', () => {
-  assert.equal(resolveModel(com, { id: 'tiny-model', contextWindow: 8192 }).model.maxTokens, 4096);
+  assert.equal(resolveModel(site, { id: 'tiny-model', contextWindow: 8192 }).model.maxTokens, 4096);
 });
 
 // What a model can read is the site's statement about that model; the plugin does not second-guess it.
 test('input types the site lists are passed through as listed', () => {
-  assert.deepEqual(resolveModel(com, { id: 'glm-5.3-flash', input: ['text', 'image'] }).model.input, ['text', 'image']);
+  assert.deepEqual(resolveModel(site, { id: 'glm-5.3-flash', input: ['text', 'image'] }).model.input, ['text', 'image']);
 });
 
-// Observed live on both sites: glm-5.3-flash refuses `thinking: disabled`, which is what
+// Observed live: glm-5.3-flash refuses `thinking: disabled`, which is what
 // these wire formats send when no level is chosen — so every default request failed.
 test('a model that cannot run without thinking gets a default level', () => {
-  assert.equal(resolveModel(com, { id: 'glm-5.3-flash' }).defaultEffort, 'high');
+  assert.equal(resolveModel(site, { id: 'glm-5.3-flash' }).defaultEffort, 'high');
   // A level missing from the map keeps its default spelling and is offered; `null` hides it.
   assert.equal(defaultEffortFor(undefined, { off: null, high: null, medium: null, low: 'low' }, { thinkingFormat: 'zai' }), 'low');
 });
 
 test('no default level is forced where the provider default can stand', () => {
   // Thinking can be turned off: "nothing chosen" is a valid request.
-  assert.equal(resolveModel(com, { id: 'glm-5.1' }).defaultEffort, undefined);
+  assert.equal(resolveModel(site, { id: 'glm-5.1' }).defaultEffort, undefined);
   // OpenAI-style models send no reasoning field at all when nothing is chosen.
-  assert.equal(resolveModel(com, { id: 'gpt-6.2-sol' }).defaultEffort, undefined);
+  assert.equal(resolveModel(site, { id: 'gpt-6.2-sol' }).defaultEffort, undefined);
   assert.equal(defaultEffortFor(undefined, undefined, { thinkingFormat: 'deepseek' }), undefined);
 });

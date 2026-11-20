@@ -1545,7 +1545,7 @@
     }
   },
   "sites": {
-    "modelgo-ai": {
+    "modelgo": {
       "claude-sonnet-4.6": {
         "maxTokens": 64000
       }
@@ -1553,11 +1553,7 @@
   },
   "verified": {
     "date": "2026-11-20",
-    "sites": [
-      "modelgo",
-      "modelgo-ai"
-    ],
     "method": "scripts/live-conformance.mjs (tool round trip at each reasoning level; image input)",
-    "note": "Levels a model does not have were removed. A level the model has but a site refuses today is kept: that is for the site to fix. modelgo.com: every listed chat model family, new models level by level. modelgo.ai: one or two models per family."
+    "note": "Levels a model does not have were removed. New models were exercised level by level, then one or two models per family on api.modelgo.ai."
   }
 }

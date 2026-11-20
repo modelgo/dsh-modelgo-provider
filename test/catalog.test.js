@@ -5,7 +5,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { Catalog, endpointsUrl, isChatModel, parseEndpoints, parseModelList } from '../lib/catalog.js';
 
-const site = { id: 'modelgo', baseURL: 'https://api.modelgo.com', headers: {} };
+const site = { id: 'modelgo', baseURL: 'https://api.modelgo.ai', headers: {} };
 
 // Shape taken from the gateway's own /v1/models item (pkg/gateway/models.go).
 const listing = (ids) => ({
@@ -70,7 +70,7 @@ test('protocols are read once per chat candidate and attached to the list', asyn
 });
 
 test('endpoints helpers', () => {
-  assert.equal(endpointsUrl('https://api.modelgo.com/v1/', 'gpt-5'), 'https://api.modelgo.com/v1/models/gpt-5/endpoints');
+  assert.equal(endpointsUrl('https://api.modelgo.ai/v1/', 'gpt-5'), 'https://api.modelgo.ai/v1/models/gpt-5/endpoints');
   assert.equal(endpointsUrl('https://api.modelgo.ai', 'anthropic/claude-haiku-4.5'), 'https://api.modelgo.ai/v1/models/endpoints?model=anthropic%2Fclaude-haiku-4.5');
   assert.deepEqual(parseEndpoints({ object: 'list', data: [{ code: 'openai_chat_completions' }, { code: 'anthropic_messages' }, {}] }), ['openai_chat_completions', 'anthropic_messages']);
 });

@@ -1,10 +1,9 @@
 /**
  * ModelGo provider for DeepSeek Harness.
  *
- * Registers one provider route per ModelGo site — `modelgo` (api.modelgo.com)
- * and `modelgo-ai` (api.modelgo.ai) — so each site is its own group in the
- * model picker with its own key. Models come from the site's `/v1/models`,
- * filtered to what that key may use.
+ * Registers the `modelgo` provider route (api.modelgo.ai), shown as the ModelGo
+ * group in the model picker. Models come from the site's `/v1/models`, filtered
+ * to what the key may use.
  *
  * Keys are credential references resolved per request through the DSH
  * credential service; this plugin never stores or logs a key value.
@@ -48,7 +47,7 @@ const siteSchema = (site) => z.object({
 
 export const Config = z.object({
   sites: z.object(Object.fromEntries(SITES.map((site) => [site.id, siteSchema(site).description(`${site.displayName} — ${site.baseURL}`)])))
-    .description('The two ModelGo sites. Their keys are separate.'),
+    .description('The ModelGo site.'),
   catalogTtlMs: z.number().min(10_000).default(DEFAULT_TTL_MS).description('How long a fetched model list is reused before the site is asked again.'),
   streamIdleTimeoutMs: z.number().min(1000).max(2147483647).default(300_000).description('Abort a model stream that stays silent this long.'),
   retryPolicy: RetryPolicySchema,
@@ -85,7 +84,7 @@ export function apply(ctx, config) {
     const value = stored ?? process.env[site.apiKeyEnv];
     if (!value) {
       throw new LlmError(
-        `modelgo: no key for ${site.displayName}. Open Settings → Models, expand "${site.displayName}" and paste a key (create one at ${site.console}). Keys from the other ModelGo site do not work here.`,
+        `modelgo: no key set. Open Settings → Models, find ModelGo and paste a key (create one at ${site.console}).`,
         'MISSING_CREDENTIAL',
       );
     }
@@ -229,7 +228,7 @@ export function apply(ctx, config) {
     ctx.effect(() => ctx.llm.registerModelDiscovery(settingsNs, async (request, signal) => {
       const root = request.baseURL ? siteRoot(request.baseURL) : undefined;
       const known = sites().find((s) => s.id === request.provider) ?? sites().find((s) => s.baseURL === root);
-      if (!known) throw new LlmError('modelgo: model discovery needs one of the two ModelGo sites', 'UNKNOWN_PROVIDER');
+      if (!known) throw new LlmError('modelgo: model discovery only answers for the ModelGo site', 'UNKNOWN_PROVIDER');
       const site = { ...structuredClone(known), ...(root ? { baseURL: root } : {}) };
       const apiKey = request.apiKey ? assertUsableApiKey(request.apiKey, 'modelgo', site.apiKeyEnv) : await keyFor(site);
       const listed = await listFor(site, apiKey, { signal, force: true });
