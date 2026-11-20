@@ -6,9 +6,9 @@
 #   modelgo      https://api.modelgo.com   key reference MODELGO_API_KEY
 #   modelgo-ai   https://api.modelgo.ai    key reference MODELGO_AI_API_KEY
 #
-# The two sites issue separate keys. Keep each key in the launching environment
-# under its reference, or store it through DSH settings; this file never carries
-# a key value. A profile's own cordis.patch.yml can override this row by id,
+# The two sites issue separate keys. Paste each one in Settings → Models, or keep
+# it in the launching environment under its reference; this file never carries a
+# key value. A profile's own cordis.patch.yml can override this row by id,
 # e.g. `sites: { modelgo-ai: { enabled: false } }`.
 - insert:
     - id: modelgo

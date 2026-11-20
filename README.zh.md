@@ -14,7 +14,7 @@ ModelGo 有两个站点，账号和密钥互不通用。本插件把它们分别
 ## 安装
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.1.1
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.0
 ```
 
 其他 profile 把 `web` 换成 `tui` 或 `headless`。也可以直接从源码安装：
@@ -27,16 +27,20 @@ dsh plugin --profile web add github:modelgo/dsh-modelgo-provider
 
 ## 配置密钥
 
-在你使用的站点控制台创建密钥，然后放进启动 DSH 的环境变量：
+1. 打开**设置 → 模型**，两个 ModelGo 站点已经列在那里。
+2. 在你使用的站点那一行粘贴密钥，点**验证并保存**。
+3. 在模型选择器里选择 ModelGo 的模型即可，不需要重启。
+
+密钥在保存前会先向站点验证，填错了，或者填成另一个 ModelGo 站点的密钥，会当场提示。只需要配置你用的那个站点；没有密钥的站点不显示任何模型。
+
+密钥保存在 DSH 凭据库里。插件不会把它写进配置文件，不会再次显示它，报错信息里的密钥值也会被抹掉。
+
+无界面或脚本场景，可以改为在启动 DSH 的环境里设置：
 
 ```sh
 export MODELGO_API_KEY=mgk_...        # modelgo.com
 export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
 ```
-
-只需要配置你用的那个站点。没有密钥的站点不显示任何模型。一个站点的密钥在另一个站点不可用。
-
-密钥每次请求时通过 DSH 凭据服务解析。插件不会把密钥写进配置文件，报错信息里的密钥值也会被抹掉。
 
 ## 功能
 
@@ -84,8 +88,8 @@ export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
 
 | 现象 | 原因 |
 |---|---|
-| 选择器里少了一个站点的分组 | 该站点没有配置密钥，或被禁用 |
-| `MISSING_CREDENTIAL` | 启动 DSH 的环境里，该站点的密钥引用解析不到值 |
+| 选择器里少了一个站点的分组 | 该站点没有配置密钥（在设置 → 模型里填），或被禁用 |
+| `MISSING_CREDENTIAL` | 该站点没有保存密钥，启动 DSH 的环境里也没有设置 |
 | 读取模型列表时报 `AUTH` | 密钥错误，或者用了另一个站点的密钥 |
 | 缺少某个预期的模型 | 密钥的策略不允许使用它，或者它不是对话模型 |
 
@@ -94,6 +98,7 @@ export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
 ```sh
 npm test                 # 单元测试，不联网
 npm run smoke:e2e        # 真实 dsh + 本地模拟网关：两个站点、两种协议
+node scripts/mock-gateway.mjs   # 单独启动模拟网关，手动试设置页里的密钥卡片
 npm run smoke:live       # 用环境变量里的密钥对真实站点做只读检查
 ```
 

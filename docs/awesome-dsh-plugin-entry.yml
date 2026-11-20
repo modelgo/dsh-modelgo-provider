@@ -5,5 +5,5 @@ url: https://github.com/modelgo/dsh-modelgo-provider
 name: modelgo/dsh-modelgo-provider
 category: model
 description:
-  en: 'ModelGo model provider: the modelgo.com and modelgo.ai sites appear as two groups in the model picker, each with its own key, with chat models read from the site''s /v1/models and sent on the protocol the site advertises for each model (Chat Completions or Anthropic Messages).'
-  zh: 'ModelGo 模型提供商：modelgo.com 与 modelgo.ai 两个站点在模型选择器里各成一组、各用各的密钥，对话模型取自站点的 /v1/models，并按站点为每个模型声明的协议（Chat Completions 或 Anthropic Messages）发送。'
+  en: 'ModelGo model provider: the modelgo.com and modelgo.ai sites appear as two groups in the model picker, each with its own key pasted and verified in Settings → Models, with chat models read from the site''s /v1/models and sent on the protocol the site advertises for each model (Chat Completions or Anthropic Messages).'
+  zh: 'ModelGo 模型提供商：modelgo.com 与 modelgo.ai 两个站点在模型选择器里各成一组，密钥在「设置 → 模型」里粘贴并当场验证、各站各用各的，对话模型取自站点的 /v1/models，并按站点为每个模型声明的协议（Chat Completions 或 Anthropic Messages）发送。'

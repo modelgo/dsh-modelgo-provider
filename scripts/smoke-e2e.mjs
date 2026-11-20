@@ -20,69 +20,18 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
-import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
+import { MOCK_KEYS, startMockGateway } from './mock-gateway.mjs';
 import { pack } from './pack.mjs';
 
 const exec = promisify(execFile);
 const [dshBin, ...dshArgs] = (process.env.DSH_BIN ?? 'dsh').split(' ');
-const KEYS = { com: 'mgk_smoke_com_site_key_0001', ai: 'mgk_smoke_ai_site_key_0002' };
 
-// ---------------------------------------------------------------- mock gateway
-const seen = [];
-const sse = (res, events) => {
-  res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' });
-  for (const event of events) res.write(event);
-  res.end();
-};
-const json = (res, status, body) => { res.writeHead(status, { 'content-type': 'application/json' }); res.end(JSON.stringify(body)); };
-const item = (id) => ({ id, object: 'model', created: 1735689600, context_length: 200000, max_request_bytes: 33554432, input_modalities: ['text', 'image'], output_modalities: ['text'] });
-
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, 'http://mock');
-  const [, siteKey, ...rest] = url.pathname.split('/');
-  const route = `/${rest.join('/')}`;
-  const key = (req.headers.authorization ?? '').replace(/^Bearer /, '') || req.headers['x-api-key'];
-  let body = '';
-  for await (const chunk of req) body += chunk;
-  seen.push({ site: siteKey, method: req.method, route, key, model: body ? JSON.parse(body).model : undefined });
-  if (key !== KEYS[siteKey]) return json(res, 401, { error: { code: 401, message: 'unauthorized' } });
-
-  if (req.method === 'GET' && route === '/v1/models') {
-    return json(res, 200, { object: 'list', data: [item('gpt-5'), item('claude-sonnet-5'), { ...item('text-embedding-3-large'), output_modalities: ['embedding'] }] });
-  }
-  const endpoints = route.match(/^\/v1\/models\/([^/]+)\/endpoints$/);
-  if (req.method === 'GET' && endpoints) {
-    const code = endpoints[1].startsWith('claude') ? 'anthropic_messages' : 'openai_chat_completions';
-    return json(res, 200, { object: 'list', model: endpoints[1], data: [{ code }] });
-  }
-  if (req.method === 'POST' && route === '/v1/chat/completions') {
-    const chunk = (delta, finish = null) => `data: ${JSON.stringify({ id: 'chatcmpl-smoke', object: 'chat.completion.chunk', created: 1, model: 'gpt-5', choices: [{ index: 0, delta, finish_reason: finish }] })}\n\n`;
-    return sse(res, [
-      chunk({ role: 'assistant', content: '' }),
-      chunk({ content: `pong-chat-${siteKey}` }),
-      chunk({}, 'stop'),
-      `data: ${JSON.stringify({ id: 'chatcmpl-smoke', object: 'chat.completion.chunk', created: 1, model: 'gpt-5', choices: [], usage: { prompt_tokens: 5, completion_tokens: 3, total_tokens: 8 } })}\n\n`,
-      'data: [DONE]\n\n',
-    ]);
-  }
-  if (req.method === 'POST' && route === '/v1/messages') {
-    const event = (type, data) => `event: ${type}\ndata: ${JSON.stringify({ type, ...data })}\n\n`;
-    return sse(res, [
-      event('message_start', { message: { id: 'msg_smoke', type: 'message', role: 'assistant', model: 'claude-sonnet-5', content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 5, output_tokens: 1 } } }),
-      event('content_block_start', { index: 0, content_block: { type: 'text', text: '' } }),
-      event('content_block_delta', { index: 0, delta: { type: 'text_delta', text: `pong-messages-${siteKey}` } }),
-      event('content_block_stop', { index: 0 }),
-      event('message_delta', { delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: 3 } }),
-      event('message_stop', {}),
-    ]);
-  }
-  return json(res, 404, { error: { code: 404, message: `no mock for ${req.method} ${route}` } });
-});
-await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-const origin = `http://127.0.0.1:${server.address().port}`;
+const mock = await startMockGateway();
+const { origin, seen } = mock;
+const KEYS = MOCK_KEYS;
 
 // ---------------------------------------------------------------- real engine
 const root = await mkdtemp(path.join(os.tmpdir(), 'dsh-modelgo-e2e-'));
@@ -124,7 +73,7 @@ try {
     console.log(`ok: ${c.provider}/${c.model} → ${c.route} with its own key (${seen.length} requests)`);
   }
 } finally {
-  server.close();
+  mock.close();
   if (!process.env.KEEP_SMOKE_DIR) await rm(root, { recursive: true, force: true });
   else console.log(`kept ${root}`);
 }

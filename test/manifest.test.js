@@ -29,3 +29,13 @@ test('the version in README install commands matches package.json', () => {
     for (const [, version] of read(name).matchAll(/dsh-modelgo-provider@(\d+\.\d+\.\d+[\w.-]*)/g)) assert.equal(version, pkg.version, name);
   }
 });
+
+test('the browser half is shipped and declared', () => {
+  assert.equal(pkg.exports['./client'], './client.js');
+  assert.ok(pkg.files.includes('client.js'));
+  assert.equal(pkg.dsh.client.platform, 'web');
+  const client = read('client.js');
+  assert.match(client, new RegExp(`id: '${pkg.name}'`), 'the client module id must be the package name');
+  // The card must store under the same references the Host resolves.
+  for (const ref of ['MODELGO_API_KEY', 'MODELGO_AI_API_KEY']) assert.match(client, new RegExp(`ref: '${ref}'`));
+});

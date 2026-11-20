@@ -33,18 +33,19 @@ const Model = z.object({
   api: z.union([...APIS]).description('Force the wire protocol for this model.'),
 });
 
-// A factory, not a shared instance: each site carries its own description.
-const siteSchema = () => z.object({
+// A factory, not a shared instance: each site carries its own description and key reference.
+const siteSchema = (site) => z.object({
   enabled: z.boolean().default(true).description('Show this site in the model picker.'),
   displayName: z.string().description('Group heading in the model picker.'),
   baseURL: z.string().description('Site address, with or without /v1.'),
-  apiKeyEnv: z.string().role('credential-ref').description('Credential reference holding this site\'s key.'),
+  // Defaulted here, not only in code, so Settings → Models can show whether this site's key is set.
+  apiKeyEnv: z.string().role('credential-ref').default(site.apiKeyEnv).description('Credential reference holding this site\'s key.'),
   headers: z.dict(z.string()).description('Extra HTTP headers for this site only.'),
   models: z.array(Model).default([]).description('Empty serves every chat model the site lists for your key. A non-empty list serves exactly these.'),
 });
 
 export const Config = z.object({
-  sites: z.object(Object.fromEntries(SITES.map((site) => [site.id, siteSchema().description(`${site.displayName} — ${site.baseURL}`)])))
+  sites: z.object(Object.fromEntries(SITES.map((site) => [site.id, siteSchema(site).description(`${site.displayName} — ${site.baseURL}`)])))
     .description('The two ModelGo sites. Their keys are separate.'),
   catalogTtlMs: z.number().min(10_000).default(DEFAULT_TTL_MS).description('How long a fetched model list is reused before the site is asked again.'),
   streamIdleTimeoutMs: z.number().min(1000).max(2147483647).default(300_000).description('Abort a model stream that stays silent this long.'),
@@ -82,7 +83,7 @@ export function apply(ctx, config) {
     const value = stored ?? process.env[site.apiKeyEnv];
     if (!value) {
       throw new LlmError(
-        `modelgo: no key for ${site.displayName}. Create one at ${site.console}, then set ${site.apiKeyEnv} in the environment that starts DSH or store it in Settings. Keys from the other ModelGo site do not work here.`,
+        `modelgo: no key for ${site.displayName}. Open Settings → Models, expand "${site.displayName}" and paste a key (create one at ${site.console}). Keys from the other ModelGo site do not work here.`,
         'MISSING_CREDENTIAL',
       );
     }
@@ -201,6 +202,14 @@ export function apply(ctx, config) {
   ctx.on('llm/adapters-updated', () => {
     const routes = sites().filter((site) => site.enabled).map((site) => site.id);
     if (routes.length !== registeredRoutes.length || routes.some((r, i) => r !== registeredRoutes[i])) ensureRegistration();
+  });
+  // A key saved or removed in Settings changes what a site offers: tell the picker.
+  ctx.on('credentials/reference-updated', (ref) => {
+    for (const site of sites()) {
+      if (site.apiKeyEnv !== String(ref)) continue;
+      lastError.delete(site.id);
+      try { ctx.emit('llm/models-updated', site.id); } catch (error) { ctx.logger.warn(error); }
+    }
   });
   ctx.on('loader/volatile-update', () => {
     sitesMemo = undefined;

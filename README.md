@@ -14,7 +14,7 @@ ModelGo runs two sites with separate accounts and keys. This plugin adds each as
 ## Install
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.1.1
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.0
 ```
 
 Use `--profile tui` or `--profile headless` for those profiles. To install from source instead:
@@ -25,18 +25,22 @@ dsh plugin --profile web add github:modelgo/dsh-modelgo-provider
 
 Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1 and 0.2.2-rc.5. There is no build step and no runtime dependency beyond what DSH ships.
 
-## Set your keys
+## Set your key
 
-Create a key in the console of the site you use, then put it in the environment that starts DSH:
+1. Open **Settings → Models**. The two ModelGo sites are listed there.
+2. Paste your key into the row of the site you use and click **Verify and save**.
+3. Pick a ModelGo model in the model picker. No restart is needed.
+
+The key is checked against the site before it is saved, so a mistyped key, or a key from the other ModelGo site, is refused on the spot. You only need a key for the site you use; a site with no key shows no models.
+
+The key is stored in the DSH credential store. The plugin never writes it to a config file, never shows it again, and removes key values from error messages.
+
+For headless or scripted use, set the key in the environment that starts DSH instead:
 
 ```sh
 export MODELGO_API_KEY=mgk_...        # modelgo.com
 export MODELGO_AI_API_KEY=mgk_...     # modelgo.ai
 ```
-
-You only need the key for the site you use. A site with no key shows no models. A key from one site does not work on the other.
-
-Keys are resolved through the DSH credential service on every request. The plugin never writes a key to a config file and removes key values from error messages.
 
 ## What it does
 
@@ -84,8 +88,8 @@ A model entry takes `id`, and optionally `name`, `contextWindow`, `maxTokens`, `
 
 | Symptom | Cause |
 |---|---|
-| A site's group is missing from the picker | No key is set for that site, or the site is disabled |
-| `MISSING_CREDENTIAL` | The key reference for that site resolves to nothing in the environment that started DSH |
+| A site's group is missing from the picker | No key is set for that site (set it in Settings → Models), or the site is disabled |
+| `MISSING_CREDENTIAL` | No key is stored for that site, and none is set in the environment that started DSH |
 | `AUTH` when listing models | The key is wrong, or belongs to the other site |
 | A model you expect is missing | Your key's policy does not allow it, or it is not a chat model |
 
@@ -94,6 +98,7 @@ A model entry takes `id`, and optionally `name`, `contextWindow`, `maxTokens`, `
 ```sh
 npm test                 # unit tests, no network
 npm run smoke:e2e        # real dsh + local mock gateway: both sites, both protocols
+node scripts/mock-gateway.mjs   # the mock on its own, to try the settings card by hand
 npm run smoke:live       # read-only check against the real sites, using keys from the environment
 ```
 
