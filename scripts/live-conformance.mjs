@@ -5,6 +5,7 @@
  *
  *   node scripts/live-conformance.mjs modelgo/deepseek-v4-flash modelgo-ai/claude-sonnet-5
  *   CASES=tool,image node scripts/live-conformance.mjs modelgo/gpt-5.4-mini
+ *   node scripts/live-conformance.mjs modelgo/claude-opus-5@low,max      # only these levels
  *
  * A plain "say pong" proves little: the failures users report are in tool-call
  * turns, in reasoning replay, and in image input. Each `<route>/<model>` runs:
@@ -42,7 +43,12 @@ const [dshBin, ...dshArgs] = (process.env.DSH_BIN ?? 'dsh').split(' ');
 const WORKERS = Number(process.env.WORKERS ?? 4);
 const wanted = new Set((process.env.CASES ?? 'tool,think,image').split(','));
 const sites = new Map(resolveSites({}).map((site) => [site.id, site]));
-const targets = process.argv.slice(2).map((arg) => { const i = arg.indexOf('/'); return { provider: arg.slice(0, i), model: arg.slice(i + 1) }; });
+// `<route>/<model>` or `<route>/<model>@low,max` to try only those reasoning levels (for costly models).
+const targets = process.argv.slice(2).map((arg) => {
+  const i = arg.indexOf('/');
+  const [model, only] = arg.slice(i + 1).split('@');
+  return { provider: arg.slice(0, i), model, ...(only ? { only: new Set(only.split(',')) } : {}) };
+});
 if (!targets.length || targets.some((t) => !sites.has(t.provider) || !t.model)) {
   console.error('usage: node scripts/live-conformance.mjs <modelgo|modelgo-ai>/<model> ...');
   process.exit(2);
@@ -76,13 +82,13 @@ for (const site of sites.values()) {
 }
 
 /** The cases that apply to one model, judged by what the plugin itself would offer for it. */
-function casesFor({ provider, model }) {
+function casesFor({ provider, model, only }) {
   const resolved = resolveModel(sites.get(provider), live.get(provider).get(model) ?? { id: model })?.model;
   const cases = [];
   if (wanted.has('tool')) cases.push({ name: 'tool' });
   if (wanted.has('think') && resolved?.reasoning) {
     // A level the shipped map hides is known not to be offered; every other one is tried.
-    for (const level of LEVELS) if (resolved.thinkingLevelMap?.[level] !== null) cases.push({ name: 'think', effort: level });
+    for (const level of LEVELS) if (resolved.thinkingLevelMap?.[level] !== null && (!only || only.has(level))) cases.push({ name: 'think', effort: level });
   }
   if (wanted.has('image') && resolved?.input.includes('image')) cases.push({ name: 'image' });
   return cases;
@@ -127,7 +133,7 @@ async function worker(index, queue, tarball) {
 
 try {
   const { tarball } = await pack(root);
-  const queue = targets.flatMap((target) => casesFor(target).map((c) => ({ ...target, ...c })));
+  const queue = targets.flatMap(({ provider, model, only }) => casesFor({ provider, model, only }).map((c) => ({ provider, model, ...c })));
   console.log(`${queue.length} cases over ${targets.length} models, ${Math.min(WORKERS, queue.length)} at a time`);
   await Promise.all(Array.from({ length: Math.min(WORKERS, queue.length) }, (_, index) => worker(index, queue, tarball)));
 } finally {
