@@ -1,6 +1,6 @@
 {
   "name": "@model-go/dsh-modelgo-provider",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "ModelGo model provider for DeepSeek Harness: ModelGo models in the model picker, with the key set on the plugin page or in Settings → Models and models read from the site's /v1/models.",
   "license": "MIT",
   "author": "modelgo",

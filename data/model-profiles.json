@@ -1417,6 +1417,9 @@
         "supportsDeveloperRole": false,
         "supportsStore": false,
         "thinkingFormat": "qwen"
+      },
+      "thinkingLevelMap": {
+        "medium": null
       }
     },
     "qwen3.6-max-preview": {

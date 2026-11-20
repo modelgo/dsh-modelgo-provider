@@ -11,7 +11,7 @@
 命令行：
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.3.0
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.3.1
 ```
 
 其他 profile 把 `web` 换成 `tui` 或 `headless`。
@@ -43,7 +43,7 @@ export MODELGO_API_KEY=mgk_...
 - **模型列表来自站点。** 用你的密钥读取 `GET /v1/models`，看到的就是这把密钥能用的模型。列表缓存 10 分钟，并保存在本地，重启后立刻可用。
 - **每个模型走站点为它开放的协议。** Claude 模型走 `/v1/messages`，其他对话模型走 `/v1/chat/completions`，以站点的 `GET /v1/models/{model}/endpoints` 为准。
 - **上下文窗口和图片输入**取自站点为每个模型发布的信息。
-- **思考档位**按 [`data/model-profiles.json`](data/model-profiles.json) 提供，每个档位都用真实的工具调用验证过。
+- **思考档位**按 [`data/model-profiles.json`](data/model-profiles.json) 提供，每个档位都用真实的工具调用验证过。不选档位时按模型厂商的默认行为运行，插件不会自己加思考开关。
 - **流式输出、工具调用和思考回放**由 DSH 自带的 pi-ai 适配器处理，行为与内置提供商一致。
 
 向量、图片、视频、音频模型不会列出：当前版本只覆盖对话模型。

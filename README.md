@@ -11,7 +11,7 @@ Desktop app: **Plugins → Add plugin**, enter `@model-go/dsh-modelgo-provider`.
 Command line:
 
 ```sh
-dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.3.0
+dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.3.1
 ```
 
 Use `--profile tui` or `--profile headless` for those profiles.
@@ -43,7 +43,7 @@ export MODELGO_API_KEY=mgk_...
 - **Models come from the site.** The list is read from `GET /v1/models` with your key, so you see exactly the models your key may use. It is cached for 10 minutes and kept on disk, so it is available at once after a restart.
 - **Each model uses the protocol the site offers for it.** Claude models go to `/v1/messages`; other chat models go to `/v1/chat/completions`, as the site's `GET /v1/models/{model}/endpoints` says.
 - **Context window and image input** come from what the site publishes for each model.
-- **Reasoning levels** follow [`data/model-profiles.json`](data/model-profiles.json), each level checked with a real tool call.
+- **Reasoning levels** follow [`data/model-profiles.json`](data/model-profiles.json), each level checked with a real tool call. When you pick no level, the model runs on its vendor's default: the plugin sends no reasoning switch of its own.
 - **Streaming, tool calls and reasoning replay** are handled by the pi-ai adapter that DSH itself ships, so behaviour matches the built-in providers.
 
 Embedding, image, video and audio models are not listed: this version covers chat models only.
