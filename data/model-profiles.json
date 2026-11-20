@@ -35,6 +35,32 @@
         "supportsStrictTools": true
       }
     },
+    "claude-fable-5.1": {
+      "api": "anthropic-messages",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-fable-5.2": {
+      "api": "anthropic-messages",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
     "claude-haiku-4.5": {
       "api": "anthropic-messages",
       "contextWindow": 200000,
@@ -45,6 +71,18 @@
       ],
       "reasoning": true,
       "compat": {
+        "supportsStrictTools": true
+      }
+    },
+    "claude-haiku-5.5": {
+      "api": "anthropic-messages",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
         "supportsStrictTools": true
       }
     },
@@ -135,6 +173,19 @@
         "supportsStrictTools": true
       }
     },
+    "claude-opus-5.5": {
+      "api": "anthropic-messages",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsTemperature": false,
+        "supportsStrictTools": true
+      }
+    },
     "claude-sonnet-4.5": {
       "api": "anthropic-messages",
       "contextWindow": 200000,
@@ -183,7 +234,37 @@
         "supportsStrictTools": true
       }
     },
+    "claude-sonnet-5.5": {
+      "api": "anthropic-messages",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
     "deepseek-v4-flash": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "minimal": null,
+        "low": null,
+        "medium": null,
+        "high": null,
+        "max": null
+      },
+      "compat": {
+        "supportsStore": false,
+        "supportsDeveloperRole": false,
+        "requiresReasoningContentOnAssistantMessages": true,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "deepseek-v4-pro": {
       "api": "openai-completions",
       "contextWindow": 1048576,
       "reasoning": true,
@@ -201,9 +282,25 @@
         "thinkingFormat": "deepseek"
       }
     },
-    "deepseek-v4-pro": {
+    "deepseek-v4.1-flash": {
       "api": "openai-completions",
-      "contextWindow": 1048576,
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "minimal": null,
+        "low": null,
+        "medium": null,
+        "high": "high",
+        "max": "max"
+      },
+      "compat": {
+        "supportsStore": false,
+        "supportsDeveloperRole": false,
+        "requiresReasoningContentOnAssistantMessages": true,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "deepseek-v4.1-flash-1017": {
+      "api": "openai-completions",
       "reasoning": true,
       "thinkingLevelMap": {
         "minimal": null,
@@ -432,6 +529,41 @@
         "supportsDeveloperRole": false
       }
     },
+    "gemini-3.7-flash": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-4-argon": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-4-carbon": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-4-hydrogen": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-4-neon": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
     "glm-4.5v": {
       "api": "openai-completions",
       "input": [
@@ -514,6 +646,49 @@
     "glm-5.2": {
       "api": "openai-completions",
       "contextWindow": 1048576,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5.2-fast-preview": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5.3": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5.3-flash": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      },
+      "thinkingLevelMap": {
+        "off": null
+      }
+    },
+    "glm-5.3-prime": {
+      "api": "openai-completions",
       "reasoning": true,
       "compat": {
         "supportsDeveloperRole": false,
@@ -708,6 +883,32 @@
         "max": null
       }
     },
+    "gpt-5.4": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.4-mini": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
     "gpt-5.4-nano": {
       "api": "openai-completions",
       "contextWindow": 400000,
@@ -738,6 +939,19 @@
         "off": null,
         "minimal": null,
         "low": null,
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.5": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
         "medium": "medium",
         "high": "high",
         "xhigh": "xhigh",
@@ -796,6 +1010,118 @@
         "high": "high",
         "xhigh": "xhigh",
         "max": "max"
+      }
+    },
+    "gpt-6-astra": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6-luna": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6-sol": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6.1-sol": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6.1-terra": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6.2-astra": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-6.2-sol": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "grok-4.5": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "grok-4.6": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "grok-4.7": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
       }
     },
     "kimi-k2.5": {
@@ -900,6 +1226,69 @@
         "deferredToolsMode": "kimi"
       }
     },
+    "kimi-k3.1-pro": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": null,
+        "high": "high",
+        "xhigh": null,
+        "max": "max"
+      },
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": true,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "openai",
+        "requiresReasoningContentOnAssistantMessages": true,
+        "deferredToolsMode": "kimi"
+      }
+    },
+    "kimi-k3.1-pro-highspeed": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": null,
+        "high": "high",
+        "xhigh": null,
+        "max": "max"
+      },
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": true,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "openai",
+        "requiresReasoningContentOnAssistantMessages": true,
+        "deferredToolsMode": "kimi"
+      }
+    },
+    "mimo-v2-6-flash": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      },
+      "thinkingLevelMap": {
+        "minimal": null
+      }
+    },
+    "mimo-v2-6-pro": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
     "minimax-m2": {
       "api": "openai-completions",
       "contextWindow": 204800,
@@ -935,6 +1324,32 @@
     "minimax-m2.7": {
       "api": "openai-completions",
       "contextWindow": 128000,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "minimax-m3": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      },
+      "thinkingLevelMap": {
+        "minimal": null,
+        "low": null,
+        "medium": null,
+        "high": null
+      }
+    },
+    "minimax-m3.1-flash": {
+      "api": "openai-completions",
       "reasoning": true,
       "compat": {
         "supportsDeveloperRole": false,
@@ -999,6 +1414,9 @@
         "supportsDeveloperRole": false,
         "supportsStore": false,
         "thinkingFormat": "qwen"
+      },
+      "thinkingLevelMap": {
+        "medium": null
       }
     },
     "qwen3.6-max-preview": {
@@ -1049,6 +1467,36 @@
         "thinkingFormat": "qwen"
       }
     },
+    "qwen3.8-2.4t-a95b": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      },
+      "thinkingLevelMap": {
+        "off": null
+      }
+    },
+    "qwen3.8-27b": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.8-flash": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
     "qwen3.8-max": {
       "api": "openai-completions",
       "contextWindow": 1000000,
@@ -1062,6 +1510,38 @@
         "supportsStore": false,
         "thinkingFormat": "qwen"
       }
+    },
+    "qwen3.8-max-0902": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen4-max": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "step-3.7-flash": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "step-5-preview": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
     }
   },
   "sites": {
@@ -1070,5 +1550,11 @@
         "maxTokens": 64000
       }
     }
+  },
+  "verified": {
+    "date": "2026-11-20",
+    "site": "modelgo",
+    "method": "scripts/live-conformance.mjs (tool round trip at each reasoning level)",
+    "note": "Levels a site refused were removed. Entries for Claude 4.x/5 and gpt-5.4-pro were only partly exercised."
   }
 }

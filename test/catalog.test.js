@@ -1,4 +1,7 @@
 import test from 'node:test';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import assert from 'node:assert/strict';
 import { Catalog, endpointsUrl, isChatModel, parseEndpoints, parseModelList } from '../lib/catalog.js';
 
@@ -177,4 +180,45 @@ test('failed protocol reads leave the list usable, mark it for an early retry, a
   await catalog.get(site, 'k');
   await catalog.settled();
   assert.deepEqual((await catalog.get(site, 'k')).entries[0].protocols, ['openai_chat_completions']);
+});
+
+test('the last good list survives a restart, per key, and holds no key', async () => {
+  const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mgo-cache-'));
+  try {
+    const first = new Catalog({ cacheDir, fetchImpl: gateway(() => jsonResponse(listing(['gpt-5']))) });
+    await first.get(site, 'mgk_restart_key_aaaa');
+    const file = path.join(cacheDir, 'models-modelgo.json');
+    assert.doesNotMatch(fs.readFileSync(file, 'utf8'), /mgk_restart_key_aaaa/);
+    assert.equal(fs.statSync(file).mode & 0o777, 0o600);
+
+    // A new process with the site unreachable still serves the saved list.
+    let calls = 0;
+    const offline = async () => { calls += 1; throw new Error('offline'); };
+    const second = new Catalog({ cacheDir, fetchImpl: offline });
+    const served = await second.get(site, 'mgk_restart_key_aaaa');
+    assert.deepEqual(served.entries.map((e) => e.id), ['gpt-5']);
+    assert.deepEqual(served.entries[0].protocols, ['openai_chat_completions']);
+    await second.settled();
+    assert.ok(calls > 0, 'and refreshes behind it');
+
+    // Another key never sees a list fetched with a different one.
+    const third = new Catalog({ cacheDir, fetchImpl: offline });
+    await assert.rejects(third.get(site, 'mgk_other_key_bbbb'));
+  } finally {
+    fs.rmSync(cacheDir, { recursive: true, force: true });
+  }
+});
+
+test('a rejected key removes the saved list', async () => {
+  const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'mgo-cache-'));
+  try {
+    const first = new Catalog({ cacheDir, fetchImpl: gateway(() => jsonResponse(listing(['gpt-5']))) });
+    await first.get(site, 'k');
+    const second = new Catalog({ cacheDir, fetchImpl: async () => jsonResponse({ error: { message: 'unauthorized' } }, 401) });
+    await second.get(site, 'k');
+    await second.settled();
+    assert.equal(fs.existsSync(path.join(cacheDir, 'models-modelgo.json')), false);
+  } finally {
+    fs.rmSync(cacheDir, { recursive: true, force: true });
+  }
 });

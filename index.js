@@ -9,6 +9,8 @@
  * Keys are credential references resolved per request through the DSH
  * credential service; this plugin never stores or logs a key value.
  */
+import os from 'node:os';
+import path from 'node:path';
 import z from '@deepseek-ai/schemastery';
 import {
   LlmError, RetryPolicySchema, assertUsableApiKey, attributionHeaders, resolveImageAttachmentAccess, resolveRetryPolicy,
@@ -90,7 +92,10 @@ export function apply(ctx, config) {
     return assertUsableApiKey(value, 'modelgo', ref);
   };
 
+  // The same home the launcher uses; plugin-owned data lives beside the profiles.
+  const dshHome = process.env.DSH_HOME && path.isAbsolute(process.env.DSH_HOME) ? process.env.DSH_HOME : path.join(os.homedir(), '.dsh');
   const catalog = new Catalog({
+    cacheDir: path.join(dshHome, 'plugin-data', 'dsh-modelgo-provider'),
     ttlMs: current().catalogTtlMs ?? DEFAULT_TTL_MS,
     headers: () => attributionHeaders(),
     onChange: (siteId) => { try { ctx.emit('llm/models-updated', siteId); } catch (error) { ctx.logger.warn(error); } },
