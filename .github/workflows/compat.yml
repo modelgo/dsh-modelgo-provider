@@ -1,0 +1,38 @@
+name: compat
+
+# Weekly run against whatever DSH currently publishes as `latest` and `next`,
+# so a host release that breaks the plugin is noticed before users report it.
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dsh: [latest, next]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm @deepseek-ai/dsh@${{ matrix.dsh }}
+      - run: dsh --version
+      - run: npm run smoke:e2e
+      - name: Open a tracking issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Compat check failed on DSH ${{ matrix.dsh }}"
+          if [ -z "$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title \"$title\"" --json number --jq '.[0].number')" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" \
+              --body "The weekly end-to-end run failed on DSH \`$(dsh --version 2>/dev/null || echo unknown)\`: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi

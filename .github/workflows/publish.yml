@@ -1,0 +1,37 @@
+name: publish
+
+# Publishes to npm when a version tag is pushed, through npm trusted
+# publishing (OIDC): no token is stored in this repository and no one-time
+# password is needed. The package's npm settings must list this repository
+# and this workflow file as its trusted publisher.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - run: npm install --global npm@latest pnpm @deepseek-ai/dsh@latest
+      - name: Tag must match package.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "tag $GITHUB_REF_NAME does not match package.json version $version" >&2
+            exit 1
+          fi
+          # A prerelease never becomes the default install.
+          case "$version" in *-*) echo "DIST_TAG=next" >> "$GITHUB_ENV" ;; *) echo "DIST_TAG=latest" >> "$GITHUB_ENV" ;; esac
+      - run: npm test
+      - run: npm run smoke:e2e
+      - run: npm publish --access public --tag "$DIST_TAG"
