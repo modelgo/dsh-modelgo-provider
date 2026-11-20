@@ -1,0 +1,9 @@
+# Entry for https://github.com/awesome-dsh-plugin/awesome-dsh-plugin
+# Target path there: data/plugins/modelgo__dsh-modelgo-provider.yml
+# That one file is the whole submission; the READMEs are generated.
+url: https://github.com/modelgo/dsh-modelgo-provider
+name: modelgo/dsh-modelgo-provider
+category: model
+description:
+  en: 'ModelGo model provider: the modelgo.com and modelgo.ai sites appear as two groups in the model picker, each with its own key, with chat models read from the site''s /v1/models and sent on the protocol the site advertises for each model (Chat Completions or Anthropic Messages).'
+  zh: 'ModelGo 模型提供商：modelgo.com 与 modelgo.ai 两个站点在模型选择器里各成一组、各用各的密钥，对话模型取自站点的 /v1/models，并按站点为每个模型声明的协议（Chat Completions 或 Anthropic Messages）发送。'

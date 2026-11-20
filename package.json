@@ -1,0 +1,81 @@
+{
+  "name": "@model-go/dsh-modelgo-provider",
+  "version": "0.1.0",
+  "description": "ModelGo model provider for DeepSeek Harness: the modelgo.com and modelgo.ai sites as two groups in the model picker, with models read from each site's /v1/models.",
+  "license": "MIT",
+  "author": "modelgo",
+  "type": "module",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "modelgo",
+    "llm-provider",
+    "openai-compatible"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib/*.js",
+    "data/*.json",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "smoke:e2e": "node scripts/smoke-e2e.mjs",
+    "smoke:install": "node scripts/smoke-install.mjs",
+    "smoke:live": "node scripts/smoke-live.mjs",
+    "profiles:import": "node scripts/import-pi-models.mjs"
+  },
+  "engines": {
+    "node": ">=22.19.0",
+    "dsh": ">=0.2.1-rc.1 <0.3.0-0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-credentials": ">=0.2.1-rc.1 <0.3.0-0",
+    "@deepseek-ai/dsh-llm": ">=0.2.1-rc.1 <0.3.0-0",
+    "@deepseek-ai/dsh-llm-pi-ai": ">=0.2.1-rc.1 <0.3.0-0",
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "@earendil-works/pi-ai": ">=1.0.0 <2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-credentials": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-llm-pi-ai": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    },
+    "@earendil-works/pi-ai": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/modelgo/dsh-modelgo-provider.git"
+  },
+  "homepage": "https://github.com/modelgo/dsh-modelgo-provider#readme",
+  "bugs": {
+    "url": "https://github.com/modelgo/dsh-modelgo-provider/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

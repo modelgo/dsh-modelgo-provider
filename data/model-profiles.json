@@ -1,0 +1,1074 @@
+{
+  "source": "github.com/modelgo/clients pi/install.sh",
+  "models": {
+    "MiniMax-M3": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "claude-fable-5": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-haiku-4.5": {
+      "api": "anthropic-messages",
+      "contextWindow": 200000,
+      "maxTokens": 64000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsStrictTools": true
+      }
+    },
+    "claude-opus-4.5": {
+      "api": "anthropic-messages",
+      "contextWindow": 200000,
+      "maxTokens": 64000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsStrictTools": true
+      }
+    },
+    "claude-opus-4.6": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-opus-4.7": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsTemperature": false,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-opus-4.8": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsTemperature": false,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-opus-5": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsTemperature": false,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-sonnet-4.5": {
+      "api": "anthropic-messages",
+      "contextWindow": 200000,
+      "maxTokens": 64000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsStrictTools": true
+      }
+    },
+    "claude-sonnet-4.6": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
+    "claude-sonnet-5": {
+      "api": "anthropic-messages",
+      "contextWindow": 1000000,
+      "maxTokens": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "xhigh": "xhigh",
+        "max": "max"
+      },
+      "compat": {
+        "forceAdaptiveThinking": true,
+        "supportsStrictTools": true
+      }
+    },
+    "deepseek-v4-flash": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "minimal": null,
+        "low": null,
+        "medium": null,
+        "high": "high",
+        "max": "max"
+      },
+      "compat": {
+        "supportsStore": false,
+        "supportsDeveloperRole": false,
+        "requiresReasoningContentOnAssistantMessages": true,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "deepseek-v4-pro": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "minimal": null,
+        "low": null,
+        "medium": null,
+        "high": "high",
+        "max": "max"
+      },
+      "compat": {
+        "supportsStore": false,
+        "supportsDeveloperRole": false,
+        "requiresReasoningContentOnAssistantMessages": true,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-1-8": {
+      "api": "openai-completions",
+      "contextWindow": 262144,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-2.0-code": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-2.0-lite": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-2.0-mini": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-2.0-pro": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-2.1-pro": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "doubao-seed-2.1-turbo": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "gemini-2.5-flash": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-2.5-flash-lite": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-2.5-pro": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-3-flash-preview": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-3.1-flash-lite": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-3.1-pro-preview": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-3.5-flash": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-3.5-flash-lite": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "gemini-3.6-flash": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false
+      }
+    },
+    "glm-4.5v": {
+      "api": "openai-completions",
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": false,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-4.6": {
+      "api": "openai-completions",
+      "contextWindow": 202752,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-4.7": {
+      "api": "openai-completions",
+      "contextWindow": 202752,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-4.7-flash": {
+      "api": "openai-completions",
+      "contextWindow": 202752,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5": {
+      "api": "openai-completions",
+      "contextWindow": 202752,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5-turbo": {
+      "api": "openai-completions",
+      "contextWindow": 202752,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5.1": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5.2": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "glm-5v-turbo": {
+      "api": "openai-completions",
+      "contextWindow": 202752,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "zai"
+      }
+    },
+    "gpt-4.1-mini": {
+      "api": "openai-completions",
+      "contextWindow": 1047576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": false
+    },
+    "gpt-4o": {
+      "api": "openai-completions",
+      "contextWindow": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": false
+    },
+    "gpt-4o-mini": {
+      "api": "openai-completions",
+      "contextWindow": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": false
+    },
+    "gpt-5": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": "minimal",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": null,
+        "max": null
+      }
+    },
+    "gpt-5-mini": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": "minimal",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": null,
+        "max": null
+      }
+    },
+    "gpt-5-nano": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": "minimal",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": null,
+        "max": null
+      }
+    },
+    "gpt-5.1": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": null,
+        "max": null
+      }
+    },
+    "gpt-5.1-codex-mini": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": null,
+        "max": null
+      }
+    },
+    "gpt-5.2": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.2-codex": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.3-codex": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.4-nano": {
+      "api": "openai-completions",
+      "contextWindow": 400000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.4-pro": {
+      "api": "openai-completions",
+      "contextWindow": 1050000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": null,
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": null
+      }
+    },
+    "gpt-5.6-luna": {
+      "api": "openai-completions",
+      "contextWindow": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-5.6-sol": {
+      "api": "openai-completions",
+      "contextWindow": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "gpt-5.6-terra": {
+      "api": "openai-completions",
+      "contextWindow": 128000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": "none",
+        "minimal": null,
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "xhigh": "xhigh",
+        "max": "max"
+      }
+    },
+    "kimi-k2.5": {
+      "api": "openai-completions",
+      "contextWindow": 256000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "kimi-k2.6": {
+      "api": "openai-completions",
+      "contextWindow": 262144,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "kimi-k2.7-code": {
+      "api": "openai-completions",
+      "contextWindow": 262144,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null
+      },
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "kimi-k2.7-code-highspeed": {
+      "api": "openai-completions",
+      "contextWindow": 262144,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null
+      },
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "kimi-k3": {
+      "api": "openai-completions",
+      "contextWindow": 1048576,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": null,
+        "low": "low",
+        "medium": null,
+        "high": "high",
+        "xhigh": null,
+        "max": "max"
+      },
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": true,
+        "supportsStore": false,
+        "maxTokensField": "max_tokens",
+        "supportsStrictMode": false,
+        "thinkingFormat": "openai",
+        "requiresReasoningContentOnAssistantMessages": true,
+        "deferredToolsMode": "kimi"
+      }
+    },
+    "minimax-m2": {
+      "api": "openai-completions",
+      "contextWindow": 204800,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "minimax-m2.1": {
+      "api": "openai-completions",
+      "contextWindow": 204800,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "minimax-m2.5": {
+      "api": "openai-completions",
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "minimax-m2.7": {
+      "api": "openai-completions",
+      "contextWindow": 128000,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false,
+        "supportsStore": false,
+        "thinkingFormat": "deepseek"
+      }
+    },
+    "qwen3-coder-plus": {
+      "api": "openai-completions",
+      "contextWindow": 1000000,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3-max": {
+      "api": "openai-completions",
+      "contextWindow": 262144,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.5-flash": {
+      "api": "openai-completions",
+      "contextWindow": 131072,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.5-plus": {
+      "api": "openai-completions",
+      "contextWindow": 1000000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.6-flash": {
+      "api": "openai-completions",
+      "contextWindow": 1000000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.6-max-preview": {
+      "api": "openai-completions",
+      "contextWindow": 262144,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.6-plus": {
+      "api": "openai-completions",
+      "contextWindow": 1000000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.7-max": {
+      "api": "openai-completions",
+      "contextWindow": 1000000,
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.7-plus": {
+      "api": "openai-completions",
+      "contextWindow": 131072,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    },
+    "qwen3.8-max": {
+      "api": "openai-completions",
+      "contextWindow": 1000000,
+      "input": [
+        "text",
+        "image"
+      ],
+      "reasoning": true,
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsStore": false,
+        "thinkingFormat": "qwen"
+      }
+    }
+  },
+  "sites": {
+    "modelgo-ai": {
+      "claude-sonnet-4.6": {
+        "maxTokens": 64000
+      }
+    }
+  }
+}

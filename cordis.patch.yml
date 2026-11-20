@@ -1,0 +1,15 @@
+# Bundle layer installed by `dsh plugin add`.
+#
+# One plugin row serves both ModelGo sites; each site is its own provider route
+# and its own group in the model picker:
+#
+#   modelgo      https://api.modelgo.com   key reference MODELGO_API_KEY
+#   modelgo-ai   https://api.modelgo.ai    key reference MODELGO_AI_API_KEY
+#
+# The two sites issue separate keys. Keep each key in the launching environment
+# under its reference, or store it through DSH settings; this file never carries
+# a key value. A profile's own cordis.patch.yml can override this row by id,
+# e.g. `sites: { modelgo-ai: { enabled: false } }`.
+- insert:
+    - id: modelgo
+      name: '@model-go/dsh-modelgo-provider'
