@@ -1,9 +1,9 @@
 name: publish
 
-# Publishes to npm when a version tag is pushed, through npm trusted
-# publishing (OIDC): no token is stored in this repository and no one-time
-# password is needed. The package's npm settings must list this repository
-# and this workflow file as its trusted publisher.
+# Stages a release on npm when a version tag is pushed, through npm trusted
+# publishing (OIDC): no token is stored in this repository. The trusted
+# publisher is allowed `npm stage publish` only, so the version goes live
+# after a maintainer approves it on npmjs.com (Staged Packages) with 2FA.
 on:
   push:
     tags: ['v*']
@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
+  stage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,4 +34,4 @@ jobs:
           case "$version" in *-*) echo "DIST_TAG=next" >> "$GITHUB_ENV" ;; *) echo "DIST_TAG=latest" >> "$GITHUB_ENV" ;; esac
       - run: npm test
       - run: npm run smoke:e2e
-      - run: npm publish --access public --tag "$DIST_TAG"
+      - run: npm stage publish . --access public --tag "$DIST_TAG"
