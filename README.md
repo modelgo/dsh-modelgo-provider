@@ -23,7 +23,7 @@ Use `--profile tui` or `--profile headless` for those profiles. To install from 
 dsh plugin --profile web add github:modelgo/dsh-modelgo-provider
 ```
 
-Requires DSH `>=0.2.1-rc.1 <0.3.0`. There is no build step and no runtime dependency beyond what DSH ships.
+Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1 and 0.2.2-rc.5. There is no build step and no runtime dependency beyond what DSH ships.
 
 ## Set your keys
 

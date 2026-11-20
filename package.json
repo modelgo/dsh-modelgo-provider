@@ -35,12 +35,12 @@
   },
   "engines": {
     "node": ">=22.19.0",
-    "dsh": ">=0.2.1-rc.1 <0.3.0-0"
+    "dsh": ">=0.2.1-rc.1 <0.2.2-0 || >=0.2.2-0 <0.2.3-0 || >=0.2.3-0 <0.3.0-0"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-credentials": ">=0.2.1-rc.1 <0.3.0-0",
-    "@deepseek-ai/dsh-llm": ">=0.2.1-rc.1 <0.3.0-0",
-    "@deepseek-ai/dsh-llm-pi-ai": ">=0.2.1-rc.1 <0.3.0-0",
+    "@deepseek-ai/dsh-credentials": ">=0.2.1-rc.1 <0.2.2-0 || >=0.2.2-0 <0.2.3-0 || >=0.2.3-0 <0.3.0-0",
+    "@deepseek-ai/dsh-llm": ">=0.2.1-rc.1 <0.2.2-0 || >=0.2.2-0 <0.2.3-0 || >=0.2.3-0 <0.3.0-0",
+    "@deepseek-ai/dsh-llm-pi-ai": ">=0.2.1-rc.1 <0.2.2-0 || >=0.2.2-0 <0.2.3-0 || >=0.2.3-0 <0.3.0-0",
     "@deepseek-ai/schemastery": "^3.18.1",
     "@earendil-works/pi-ai": ">=1.0.0 <2.0.0"
   },

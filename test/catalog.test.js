@@ -87,7 +87,8 @@ test('the list is cached per key, refreshed after the TTL, and sent with the bea
   assert.equal(listCalls(calls).length, 2, 'a different key is a different list');
   clock = 1001;
   await catalog.get(site, 'mgk_key_one_aaaa');
-  assert.equal(listCalls(calls).length, 3);
+  await catalog.settled();
+  assert.equal(listCalls(calls).length, 3, 'a stale list is served at once and refreshed behind it');
 });
 
 test('a failed refresh serves the previous list and reports a change only when ids change', async () => {
@@ -95,12 +96,20 @@ test('a failed refresh serves the previous list and reports a change only when i
   let next = () => jsonResponse(listing(['gpt-5']));
   const changed = [];
   const catalog = new Catalog({ ttlMs: 1000, now: () => clock, fetchImpl: gateway(() => next()), onChange: (id) => changed.push(id) });
+  const errors = [];
+  catalog.onError = (id, error) => errors.push(`${id} ${error.code}`);
   await catalog.get(site, 'k');
   clock = 2000;
   next = () => jsonResponse({ error: { message: 'upstream down' } }, 502);
   assert.deepEqual((await catalog.get(site, 'k')).entries.map((e) => e.id), ['gpt-5']);
-  clock = 40_000;
+  await catalog.settled();
+  assert.deepEqual(errors, ['modelgo SERVER']);
+  assert.deepEqual((await catalog.get(site, 'k')).entries.map((e) => e.id), ['gpt-5'], 'still served after the failed refresh');
+  await assert.rejects(catalog.get(site, 'k', { force: true }), { code: 'SERVER' }, 'a forced read reports the failure instead of the old list');
+  clock = 80_000;
   next = () => jsonResponse(listing(['gpt-5', 'gpt-5-mini']));
+  await catalog.get(site, 'k');
+  await catalog.settled();
   assert.deepEqual((await catalog.get(site, 'k')).entries.map((e) => e.id), ['gpt-5', 'gpt-5-mini']);
   assert.deepEqual(changed, ['modelgo']);
 });
@@ -119,4 +128,53 @@ test('protocolsFor returns undefined when the site cannot be asked', async () =>
   assert.deepEqual(await ok.protocolsFor(site, 'k', 'claude-sonnet-5'), ['anthropic_messages']);
   const down = new Catalog({ fetchImpl: async () => { throw new Error('offline'); } });
   assert.equal(await down.protocolsFor(site, 'k', 'claude-sonnet-5'), undefined);
+});
+
+test('a key the site rejects drops the cached list', async () => {
+  let clock = 0;
+  let next = () => jsonResponse(listing(['gpt-5']));
+  const catalog = new Catalog({ ttlMs: 1000, now: () => clock, fetchImpl: gateway(() => next()) });
+  await catalog.get(site, 'k');
+  clock = 2000;
+  next = () => jsonResponse({ error: { message: 'unauthorized' } }, 401);
+  await catalog.get(site, 'k');
+  await catalog.settled();
+  await assert.rejects(catalog.get(site, 'k'), { code: 'AUTH' });
+});
+
+test('one caller giving up does not fail the others waiting on the same refresh', async () => {
+  let release;
+  const gate = new Promise((resolve) => { release = resolve; });
+  const catalog = new Catalog({ fetchImpl: gateway(async () => { await gate; return jsonResponse(listing(['gpt-5'])); }) });
+  const controller = new AbortController();
+  const impatient = catalog.get(site, 'k', { signal: controller.signal });
+  const patient = catalog.get(site, 'k');
+  controller.abort();
+  await assert.rejects(impatient, { name: 'AbortError' });
+  release();
+  assert.deepEqual((await patient).entries.map((e) => e.id), ['gpt-5']);
+});
+
+test('failed protocol reads leave the list usable, mark it for an early retry, and are not repeated at once', async () => {
+  let clock = 0;
+  let endpointsUp = false;
+  const calls = [];
+  const catalog = new Catalog({
+    ttlMs: 600_000, now: () => clock,
+    fetchImpl: async (url) => {
+      calls.push(String(url));
+      if (String(url).endsWith('/v1/models')) return jsonResponse(listing(['gpt-5']));
+      return endpointsUp ? jsonResponse({ data: [{ code: 'openai_chat_completions' }] }) : jsonResponse({ error: { message: 'busy' } }, 429);
+    },
+  });
+  const first = await catalog.get(site, 'k');
+  assert.equal(first.entries[0].protocols, undefined);
+  assert.equal(isChatModel(first.entries[0]), true, 'offered on the shipped protocol guess meanwhile');
+  await catalog.get(site, 'k', { force: true });
+  assert.equal(calls.filter((u) => u.includes('/endpoints')).length, 1, 'the miss is remembered briefly');
+  endpointsUp = true;
+  clock = 61_000;
+  await catalog.get(site, 'k');
+  await catalog.settled();
+  assert.deepEqual((await catalog.get(site, 'k')).entries[0].protocols, ['openai_chat_completions']);
 });

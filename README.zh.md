@@ -23,7 +23,7 @@ dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.1.0
 dsh plugin --profile web add github:modelgo/dsh-modelgo-provider
 ```
 
-需要 DSH `>=0.2.1-rc.1 <0.3.0`。插件没有构建步骤，也没有 DSH 自带之外的运行时依赖。
+需要 DSH `>=0.2.1-rc.1 <0.3.0`；CI 在 0.2.1-rc.2、0.2.2-rc.1、0.2.2-rc.5 上运行本插件。插件没有构建步骤，也没有 DSH 自带之外的运行时依赖。
 
 ## 配置密钥
 

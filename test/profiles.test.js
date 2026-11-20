@@ -91,3 +91,7 @@ test('a per-site correction applies to that site only', () => {
   assert.equal(resolveModel(ai, { id: 'claude-sonnet-4.6' }).model.maxTokens, 64000);
   assert.equal(resolveModel(com, { id: 'claude-sonnet-4.6' }).model.maxTokens, 128000);
 });
+
+test('an unsized model on a small context gets an output cap that fits it', () => {
+  assert.equal(resolveModel(com, { id: 'tiny-model', contextWindow: 8192 }).model.maxTokens, 4096);
+});

@@ -54,8 +54,14 @@ export const Config = z.object({
 export function apply(ctx, config) {
   const settingsNs = ctx.fiber.entry?.options.id ?? name;
   const current = () => (typeof config?.get === 'function' ? config.get() : config) ?? {};
-  const errors = new Map();
-  const reportError = (scope, error) => errors.set(scope, { at: Date.now(), code: error?.code ?? 'ERROR', message: String(error?.message ?? error) });
+  // One log line per distinct failure per site, not one per picker refresh.
+  const lastError = new Map();
+  const reportError = (scope, error) => {
+    const line = `${error?.code ?? 'ERROR'}: ${redact(error?.message ?? error)}`;
+    if (lastError.get(scope) === line) return;
+    lastError.set(scope, line);
+    ctx.logger.warn(`modelgo: ${scope}: ${line}`);
+  };
 
   let sitesMemo;
   const sites = () => {
@@ -87,12 +93,17 @@ export function apply(ctx, config) {
     ttlMs: current().catalogTtlMs ?? DEFAULT_TTL_MS,
     headers: () => attributionHeaders(),
     onChange: (siteId) => { try { ctx.emit('llm/models-updated', siteId); } catch (error) { ctx.logger.warn(error); } },
+    onError: (siteId, error) => reportError(siteId, error),
   });
 
   const listFor = async (site, apiKey, opts) => {
     try {
-      return await catalog.get(site, apiKey, opts);
+      const listed = await catalog.get(site, apiKey, opts);
+      lastError.delete(site.id);
+      return listed;
     } catch (error) {
+      // The caller gave up; that is not a site failure.
+      if (opts?.signal?.aborted) throw error;
       throw new LlmError(redact(`modelgo: cannot read the model list from ${site.baseURL}: ${error.message}`, apiKey), error.code === 'AUTH' ? 'AUTH' : 'TRANSPORT', { cause: error });
     }
   };
@@ -101,13 +112,14 @@ export function apply(ctx, config) {
   const modelsFor = async (site, apiKey, { signal } = {}) => {
     const explicit = site.models;
     let listed;
-    try { listed = await listFor(site, apiKey, { signal }); } catch (error) { if (!explicit.length) throw error; reportError(site.id, error); }
+    try { listed = await listFor(site, apiKey, { signal }); } catch (error) { if (!explicit.length || signal?.aborted) throw error; }
     const byId = new Map((listed?.entries ?? []).map((entry) => [entry.id, entry]));
     const wanted = explicit.length
       ? explicit.map((override) => ({ entry: byId.get(override.id) ?? { id: override.id }, override }))
       : [...byId.values()].filter(isChatModel).map((entry) => ({ entry, override: undefined }));
     const items = wanted.map(({ entry, override }) => resolveModel(site, entry, { override })).filter(Boolean);
-    return { items, maxRequestBytes: listed?.entries.find((e) => e.maxRequestBytes)?.maxRequestBytes };
+    const caps = (listed?.entries ?? []).map((e) => e.maxRequestBytes).filter(Boolean);
+    return { items, stamp: listed?.fetchedAt ?? 0, maxRequestBytes: caps.length ? Math.min(...caps) : undefined };
   };
 
   // Capture site, address, headers, overrides and credential reference before any await.
@@ -141,7 +153,14 @@ export function apply(ctx, config) {
   let registeredRoutes = [];
   let directory;
   let directoryKey;
+  // Registering publishes `llm/adapters-updated` synchronously, which lands back here.
+  let registering = false;
   const ensureRegistration = () => {
+    if (registering) return;
+    registering = true;
+    try { syncRegistration(); } finally { registering = false; }
+  };
+  const syncRegistration = () => {
     const enabled = sites().filter((site) => site.enabled);
     const routes = enabled.map((site) => site.id);
     const entries = enabled.map((site) => ({
