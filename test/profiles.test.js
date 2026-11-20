@@ -96,9 +96,7 @@ test('an unsized model on a small context gets an output cap that fits it', () =
   assert.equal(resolveModel(com, { id: 'tiny-model', contextWindow: 8192 }).model.maxTokens, 4096);
 });
 
-// Observed live on both sites: glm-5.3-flash is listed with image input and refuses image requests.
-test('a shipped input correction wins over what the site lists, and the user still wins over both', () => {
-  const listed = { id: 'glm-5.3-flash', input: ['text', 'image'] };
-  assert.deepEqual(resolveModel(com, listed).model.input, ['text']);
-  assert.deepEqual(resolveModel(com, listed, { override: { id: 'glm-5.3-flash', input: ['text', 'image'] } }).model.input, ['text', 'image']);
+// What a model can read is the site's statement about that model; the plugin does not second-guess it.
+test('input types the site lists are passed through as listed', () => {
+  assert.deepEqual(resolveModel(com, { id: 'glm-5.3-flash', input: ['text', 'image'] }).model.input, ['text', 'image']);
 });

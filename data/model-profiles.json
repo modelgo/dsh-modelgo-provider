@@ -685,10 +685,7 @@
       },
       "thinkingLevelMap": {
         "off": null
-      },
-      "forceInput": [
-        "text"
-      ]
+      }
     },
     "glm-5.3-prime": {
       "api": "openai-completions",
