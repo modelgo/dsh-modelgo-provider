@@ -15,11 +15,10 @@ import { execFile } from 'node:child_process';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { pack } from './pack.mjs';
 
 const exec = promisify(execFile);
-const repo = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const [dshBin, ...dshArgs] = (process.env.DSH_BIN ?? 'dsh').split(' ');
 const profile = process.env.DSH_PROFILE ?? 'web';
 const root = await mkdtemp(path.join(os.tmpdir(), 'dsh-modelgo-smoke-'));
@@ -27,14 +26,10 @@ const env = { ...process.env, DSH_HOME: path.join(root, 'dsh-home'), NO_COLOR: '
 const dsh = (args) => exec(dshBin, [...dshArgs, ...args], { env, cwd: root, maxBuffer: 64 * 1024 * 1024 });
 
 try {
-  const pack = await exec('npm', ['pack', '--json', '--pack-destination', root], { cwd: repo });
-  const [{ filename, files }] = JSON.parse(pack.stdout.slice(pack.stdout.indexOf('[')));
-  const packed = files.map((f) => f.path);
+  const { tarball, filename, files: packed } = await pack(root);
   for (const needed of ['index.js', 'cordis.patch.yml', 'lib/adapter.js', 'data/model-profiles.json']) {
     assert.ok(packed.includes(needed), `tarball is missing ${needed}`);
   }
-  const tarball = path.join(root, filename);
-
   const install = await dsh(['plugin', '--profile', profile, 'add', '--workspace-root', tarball]);
   assert.doesNotMatch(`${install.stdout}\n${install.stderr}`, /unmet peer/i);
 

@@ -14,12 +14,11 @@ import { execFile } from 'node:child_process';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { redact } from '../lib/util.js';
+import { pack } from './pack.mjs';
 
 const exec = promisify(execFile);
-const repo = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const [dshBin, ...dshArgs] = (process.env.DSH_BIN ?? 'dsh').split(' ');
 const targets = process.argv.slice(2).map((arg) => { const i = arg.indexOf('/'); return { provider: arg.slice(0, i), model: arg.slice(i + 1) }; });
 if (!targets.length || targets.some((t) => !t.provider || !t.model)) { console.error('usage: node scripts/live-chat.mjs <route>/<model> ...'); process.exit(2); }
@@ -33,9 +32,8 @@ const clean = (text) => redact(redact(text, process.env.MODELGO_API_KEY), proces
 let failed = 0;
 
 try {
-  const pack = await exec('npm', ['pack', '--json', '--pack-destination', root], { cwd: repo });
-  const [{ filename }] = JSON.parse(pack.stdout.slice(pack.stdout.indexOf('[')));
-  await dsh(['plugin', '--profile', 'headless', 'add', '--workspace-root', path.join(root, filename)]);
+  const { tarball } = await pack(root);
+  await dsh(['plugin', '--profile', 'headless', 'add', '--workspace-root', tarball]);
   const patchFile = path.join(env.DSH_HOME, 'profiles', 'headless', 'cordis.patch.yml');
 
   for (const { provider, model } of targets) {

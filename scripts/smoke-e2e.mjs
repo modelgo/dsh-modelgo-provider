@@ -23,11 +23,10 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { pack } from './pack.mjs';
 
 const exec = promisify(execFile);
-const repo = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const [dshBin, ...dshArgs] = (process.env.DSH_BIN ?? 'dsh').split(' ');
 const KEYS = { com: 'mgk_smoke_com_site_key_0001', ai: 'mgk_smoke_ai_site_key_0002' };
 
@@ -104,9 +103,8 @@ const selectModel = (provider, model) => writeFile(patchFile, [
 ].join('\n'));
 
 try {
-  const pack = await exec('npm', ['pack', '--json', '--pack-destination', root], { cwd: repo });
-  const [{ filename }] = JSON.parse(pack.stdout.slice(pack.stdout.indexOf('[')));
-  await dsh(['plugin', '--profile', 'headless', 'add', '--workspace-root', path.join(root, filename)]);
+  const { tarball } = await pack(root);
+  await dsh(['plugin', '--profile', 'headless', 'add', '--workspace-root', tarball]);
 
   const cases = [
     { provider: 'modelgo', model: 'gpt-5', site: 'com', route: '/v1/chat/completions', reply: 'pong-chat-com' },
