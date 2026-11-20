@@ -17,11 +17,9 @@ ModelGo runs two sites with separate accounts and keys. This plugin adds each as
 dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
 ```
 
-Use `--profile tui` or `--profile headless` for those profiles. To install from source instead:
+Use `--profile tui` or `--profile headless` for those profiles. In the desktop app, open **Plugins → Add plugin** and enter `@model-go/dsh-modelgo-provider`.
 
-```sh
-dsh plugin --profile web add github:modelgo/dsh-modelgo-provider
-```
+Install by package name, not by GitHub address: DSH offers updates only for plugins installed from npm. A copy installed from `github:modelgo/dsh-modelgo-provider` works, but never shows "update available" — to move it to a newer version, remove it and add it again by package name.
 
 Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1 and 0.2.2-rc.5. There is no build step and no runtime dependency beyond what DSH ships.
 

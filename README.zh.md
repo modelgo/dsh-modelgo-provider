@@ -17,11 +17,9 @@ ModelGo 有两个站点，账号和密钥互不通用。本插件把它们分别
 dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.2.1
 ```
 
-其他 profile 把 `web` 换成 `tui` 或 `headless`。也可以直接从源码安装：
+其他 profile 把 `web` 换成 `tui` 或 `headless`。桌面版在**插件 → 添加插件**里输入 `@model-go/dsh-modelgo-provider`。
 
-```sh
-dsh plugin --profile web add github:modelgo/dsh-modelgo-provider
-```
+请按包名安装，不要填 GitHub 地址：DSH 只对从 npm 安装的插件提供更新。用 `github:modelgo/dsh-modelgo-provider` 装的副本可以用，但永远不会提示「可更新」；要升级只能先卸载，再按包名重新添加。
 
 需要 DSH `>=0.2.1-rc.1 <0.3.0`；CI 在 0.2.1-rc.2、0.2.2-rc.1、0.2.2-rc.5 上运行本插件。插件没有构建步骤，也没有 DSH 自带之外的运行时依赖。
 
