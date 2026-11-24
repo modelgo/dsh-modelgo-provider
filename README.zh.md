@@ -24,11 +24,11 @@ dsh plugin --profile web add @model-go/dsh-modelgo-provider@0.3.1
 
 安装后只需要这一步：
 
-1. 打开**插件 → ModelGo**。
+1. 打开**插件 → [ModelGo](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin)**。
 2. 粘贴 API 密钥，点**验证并保存**。密钥以 `mgk_` 开头，在 [modelgo.ai](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin) 的控制台创建。
 3. 回到对话框，点输入框右下角的模型名称，选择 ModelGo 这一组里的模型。不需要重启。
 
-同一个输入框也在**设置 → 模型**的 ModelGo 一行里。
+同一个输入框也在**设置 → 模型**的 [ModelGo](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin) 一行里。
 
 密钥在保存前会先向站点验证，填错了会当场提示。它保存在 DSH 凭据库里，不会写进配置文件，也不会再次显示。
 
