@@ -24,8 +24,8 @@ Requires DSH `>=0.2.1-rc.1 <0.3.0`; CI runs the plugin on 0.2.1-rc.2, 0.2.2-rc.1
 
 This is the only step after installing:
 
-1. Open **Plugins → ModelGo**.
-2. Paste your API key and click **Verify and save**. A key starts with `mgk_` and is created in the [modelgo.ai](https://modelgo.ai) console.
+1. Open **Plugins → [ModelGo](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin)**.
+2. Paste your API key and click **Verify and save**. A key starts with `mgk_` and is created in the [modelgo.ai]([https://modelgo.ai](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin)) console.
 3. Back in a conversation, click the model name at the bottom right of the composer and pick a model from the ModelGo group. No restart is needed.
 
 The same field is in the ModelGo row of **Settings → Models**.
