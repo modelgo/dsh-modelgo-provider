@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（dsh）的 [ModelGo](https://modelgo.ai) 模型提供商插件：把 ModelGo 的模型接入 DSH 的模型选择器。
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（dsh）的 [ModelGo](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin) 模型提供商插件：把 ModelGo 的模型接入 DSH 的模型选择器。
 
 ## 安装
 
