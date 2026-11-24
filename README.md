@@ -2,7 +2,7 @@
 
 English | [中文](README.zh.md)
 
-[ModelGo]([https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin]) model provider for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh): adds ModelGo models to the DSH model picker.
+[ModelGo](https://modelgo.ai/?utm_source=dsh-market&utm_medium=sponsorship&utm_content=market_first_plugin&campaign_id=dsh-market&ad_group_id=market_first_plugin) (ModelGo) model provider for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh): adds ModelGo models to the DSH model picker.
 
 ## Install
 
